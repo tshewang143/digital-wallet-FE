@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { UserUtils } from './utils/user-utils.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'lithium-angular-example';
+
+  constructor(userUtils: UserUtils) {
+    userUtils.loginFromStore().subscribe();
+  }
 }

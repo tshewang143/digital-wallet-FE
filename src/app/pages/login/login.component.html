@@ -1,0 +1,41 @@
+<mat-toolbar>
+  <span>@lithiumjs/angular Todo App</span>
+</mat-toolbar>
+
+<div id="content-container">
+  <mat-card id="login-card">
+    <mat-card-header>
+      <mat-card-title>Sign in</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form id="login-form" #loginForm="ngForm" (ngSubmit)="onSubmit()">
+        <mat-form-field>
+          <input matInput
+                 required
+                 placeholder="Username"
+                 name="username"
+                 [(ngModel)]="username">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput
+                 required
+                 placeholder="Password"
+                 name="password"
+                 [(ngModel)]="password">
+        </mat-form-field>
+        <div>
+          <button type="submit"
+                  color="primary"
+                  mat-raised-button
+                  [disabled]="!loginEnabled">
+                  Login</button>
+        </div>
+      </form>
+      <div id="register-tag">
+        Need an account?
+        <button id="register-button" color="primary" routerLink="/register" mat-button>Click here to register.</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

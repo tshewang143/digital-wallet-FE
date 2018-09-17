@@ -1,0 +1,27 @@
+:host::ng-deep {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100vh;
+
+    background: linear-gradient(0deg, #eee, #fff 55%);
+}
+
+#content-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+#register-card {
+    min-width: 50%;
+}
+
+#register-form mat-form-field, #register-form button[type="submit"] {
+    width: 100%;
+}
+
+#register-form > * {
+    padding-bottom: 1rem;
+}
