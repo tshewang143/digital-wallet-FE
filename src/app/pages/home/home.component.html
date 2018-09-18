@@ -56,7 +56,9 @@
   </mat-sidenav>
 
   <mat-sidenav-content id="container">
-    <div id="empty-state">
+    <app-todo-list-view [hidden]="!activeTodoList" [list]="activeTodoList"></app-todo-list-view>
+
+    <div [hidden]="activeTodoList" id="empty-state">
       <mat-icon id="empty-icon">insert_drive_file</mat-icon>
       <span>You have no todo lists</span>
       <span>Click the <mat-icon color="accent">add</mat-icon> button to create your first list</span>

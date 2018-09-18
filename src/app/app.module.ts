@@ -25,13 +25,15 @@ import { HomeComponent } from './pages/home/home.component';
 import { UserUtils } from './utils/user-utils.service';
 import { SessionUtils } from './utils/session-utils.service';
 import { AuthGuard } from './guards/auth-guard.service';
+import { TodoListViewComponent } from './shared/todo-list-view/todo-list-view.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    HomeComponent
+    HomeComponent,
+    TodoListViewComponent
   ],
   imports: [
     BrowserModule,
