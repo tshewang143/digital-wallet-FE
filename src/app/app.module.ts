@@ -8,7 +8,11 @@ import {
   MatCheckboxModule,
   MatCardModule,
   MatInputModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatSidenavModule,
+  MatListModule,
+  MatRadioModule,
+  MatIconModule
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -38,6 +42,10 @@ import { AuthGuard } from './guards/auth-guard.service';
     MatCardModule,
     MatInputModule,
     MatToolbarModule,
+    MatSidenavModule,
+    MatListModule,
+    MatRadioModule,
+    MatIconModule,
 
     NgxsModule.forRoot([
       SessionState

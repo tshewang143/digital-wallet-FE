@@ -1,3 +1,66 @@
-<p>
-  Hi {{user.name}}
-</p>
+<mat-toolbar color="primary">
+  <span>@lithiumjs/angular Todo App</span>
+  <span class="spacer"></span>
+  <a mat-icon-button href="https://github.com/lVlyke/lithium-angular" target="_blank">
+    <mat-icon class="github-icon"></mat-icon>
+  </a>
+  <button mat-icon-button>
+    <mat-icon>help</mat-icon>
+  </button>
+  <button mat-raised-button
+          color="primary"
+          (click)="onLogout()">Logout</button>
+</mat-toolbar>
+
+<mat-sidenav-container>
+  <mat-sidenav id="sidenav" mode="side" opened autoresize>
+    <mat-radio-group id="sidenav-radio-group" [(ngModel)]="activeTodoList">
+
+      <mat-list>
+        <mat-list-item id="user-info">
+          <div id="user-image"
+               [ngStyle]="{ 'background': user.color }">{{user.name[0]}}</div>
+          <span>{{user.name}}</span>
+        </mat-list-item>
+
+        <h1 mat-subheader id="lists-header">
+          <mat-icon>insert_drive_file</mat-icon>
+          <span>Your todo lists</span>
+        </h1>
+
+        <ng-container *ngFor="let listName of todoListNames">
+          <mat-radio-button [value]="user.todoLists[listName]">
+              {{listName}}
+          </mat-radio-button>
+        </ng-container>
+
+        <mat-list-item id="new-list-item" [hidden]="!showNewListNameInput">
+          <input #newListNameInput
+                 mat-input
+                 [(ngModel)]="newListName"
+                 (keydown.enter)="newListNameInput.blur()"
+                 (blur)="onNewListNameInputBlur()">
+        </mat-list-item>
+
+        <mat-list-item id="add-list-item" [hidden]="showNewListNameInput">
+          <button mat-stroked-button 
+                  id="add-list-button"
+                  [color]="todoListNames.length === 0 ? 'accent' : 'primary'"
+                  (click)="onAddList()">
+              <mat-icon>add</mat-icon>
+          </button>
+        </mat-list-item>
+
+      </mat-list>
+    </mat-radio-group>
+  </mat-sidenav>
+
+  <mat-sidenav-content id="container">
+    <div id="empty-state">
+      <mat-icon id="empty-icon">insert_drive_file</mat-icon>
+      <span>You have no todo lists</span>
+      <span>Click the <mat-icon color="accent">add</mat-icon> button to create your first list</span>
+    </div>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

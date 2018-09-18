@@ -29,7 +29,7 @@ export class UserUtils {
   }
 
   public loginAs(user: Partial<User>): Observable<Session> {
-    const foundUser = this.getUserById(user.id);
+    const foundUser = this.getUserById(user.id, user.secret);
 
     if (!foundUser) {
       return throwError(`User not found: ${user.id}.`);
@@ -48,21 +48,19 @@ export class UserUtils {
   public loginFromStore(): Observable<Session> {
     const session = this.sessionUtils.session;
 
-    if (!session) {
+    if (!session || !session.user) {
       return throwError('No session found.');
     }
 
-    if (!session.user || !this.getUserById(session.user.id)) {
-      return throwError('Session is invalid.');
+    if (!session.user || !session.user.id || !session.user.secret) {
+      return throwError('No session found.');
     }
 
     if (moment().isAfter(session.expiresDate)) {
       return throwError('Session is expired.');
     }
 
-    this.loginAs(session.user);
-
-    return of(session);
+    return this.loginAs(session.user);
   }
 
   public register(name: string, id: string, password: string): Observable<User> {
@@ -74,6 +72,7 @@ export class UserUtils {
       name: name,
       id: id,
       secret: this.encodeSecret(password),
+      color: `rgb(${_.random(20, 127)},${_.random(20, 127)},${_.random(20, 127)})`,
       todoLists: {}
     };
 
@@ -87,7 +86,7 @@ export class UserUtils {
     this.sessionUtils.invalidate();
   }
 
-  public getUserById(id: string): User {
-    return _.find(this.users, { id });
+  public getUserById(id: string, secret?: string): User {
+    return _.find(this.users, secret ? { id, secret } : { id });
   }
 }

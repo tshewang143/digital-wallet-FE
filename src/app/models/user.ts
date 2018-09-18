@@ -4,6 +4,7 @@ export interface User {
     id: string;
     secret: string;
     name: string;
+    color: string;
     todoLists: User.TodoListDictionary;
 }
 

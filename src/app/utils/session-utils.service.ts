@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { LocalStorage } from 'ngx-store';
 import { Session } from '../models/session';
-import { Store } from '@ngxs/store';
+import { Store, Select } from '@ngxs/store';
 import { Observable, throwError, of } from 'rxjs';
 import { SetAction, InvalidateAction } from '../store/session/session.actions';
 import * as moment from 'moment';
 import { User } from '../models/user';
+import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 
 @Injectable()
 export class SessionUtils {
@@ -13,7 +15,21 @@ export class SessionUtils {
   @LocalStorage('session')
   private _session: Session | undefined;
 
-  constructor(private store: Store) { }
+  @LocalStorage()
+  private users: User[] = [];
+
+  @Select()
+  private session$: Observable<Session>;
+
+  constructor(private store: Store) {
+    this.session$.pipe(
+      filter(Boolean)
+    ).subscribe(session => {
+      // Update the local store
+      this._session = session;
+      this.users.splice(_.findIndex(this.users, { id: session.user.id }), 1, session.user);
+    });
+  }
 
   public get session(): Readonly<Session | undefined> {
     return this._session;
@@ -21,8 +37,8 @@ export class SessionUtils {
 
   public init(user: User): Observable<Session> {
     this._session = {
-      user,
-      expiresDate: moment().add(1, 'day').toISOString()
+      expiresDate: moment().add(1, 'day').toISOString(),
+      user: user
     };
 
     this.store.dispatch(new SetAction(this._session));
