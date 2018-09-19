@@ -1,8 +1,30 @@
-<mat-list>
-  <mat-list-item *ngFor="let todoItem of todoList.todo">
-    {{todoItem}}
-  </mat-list-item>
-  <mat-list-item>
-    <input mat-input placeholder="Test">
-  </mat-list-item>
-</mat-list>
+<div id="container">
+  <mat-list id="todo-list">
+    <mat-list-item *ngFor="let todoItem of list.todo">
+      <mat-checkbox color="primary" (click)="onCompleteItem(todoItem)">{{todoItem}}</mat-checkbox>
+    </mat-list-item>
+  </mat-list>
+
+  <mat-form-field mat-no-float class="mat-inline-label" id="add-task-form-field">
+    <input #addTaskInput
+           matInput
+           id="add-task-input"
+           placeholder="Add new task..."
+           (keydown.enter)="onAddTask(addTaskInput.value); addTaskInput.value = ''">
+  </mat-form-field>
+
+  <mat-accordion id="completed-items-accordion" 
+                 [hidden]="!list.completed || list.completed.length === 0" 
+                 [@.disabled]="true">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Completed tasks</mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-list>
+        <mat-list-item *ngFor="let completedItem of list.completed">
+            <mat-checkbox color="primary" checked="true" disabled="true">{{completedItem}}</mat-checkbox>
+        </mat-list-item>
+      </mat-list>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

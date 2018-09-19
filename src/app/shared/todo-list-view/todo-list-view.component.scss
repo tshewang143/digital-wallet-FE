@@ -1,0 +1,48 @@
+#container {
+    height: 100%;
+    background: #fff;
+}
+
+#add-task-form-field {
+    padding-left: 16px;
+    width: 30%;
+    min-width: 220px;
+}
+
+#completed-items-accordion {
+
+    mat-expansion-panel {
+        box-shadow: none;
+
+        &::ng-deep .mat-expansion-panel-body {
+            padding: 0;
+        }
+    }
+
+    mat-expansion-panel-header {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        padding-left: 16px;
+
+        &::ng-deep {
+
+            .mat-content {
+                padding-left: 0.7rem;
+            }
+
+            .mat-expansion-indicator {
+                transform: rotate(-90deg) !important;
+                transition: transform 0.15s;
+            }
+        }
+
+        &.mat-expanded {
+            height: 48px !important;
+
+            &::ng-deep .mat-expansion-indicator {
+                transform: rotate(0deg) !important;
+            }
+        }
+    }
+}

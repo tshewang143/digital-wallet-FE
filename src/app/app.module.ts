@@ -12,7 +12,8 @@ import {
   MatSidenavModule,
   MatListModule,
   MatRadioModule,
-  MatIconModule
+  MatIconModule,
+  MatExpansionModule
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -48,6 +49,7 @@ import { TodoListViewComponent } from './shared/todo-list-view/todo-list-view.co
     MatListModule,
     MatRadioModule,
     MatIconModule,
+    MatExpansionModule,
 
     NgxsModule.forRoot([
       SessionState

@@ -12,3 +12,10 @@ html, body {
     height: 24px;
     width: 24px;
 }
+
+mat-form-field.mat-inline-label {
+
+    &.mat-focused label.mat-form-field-label {
+        visibility: hidden;
+    }
+}
