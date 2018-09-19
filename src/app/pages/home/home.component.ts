@@ -1,12 +1,12 @@
 import { UpdateUserAction } from './../../store/session/session.actions';
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { StateEmitter, EventSource, AfterViewInit } from '@lithiumjs/angular';
 import { Select } from '@ngxs/store';
 import { SessionState } from '../../store/session/session.store';
 import { Observable, Subject, merge, fromEvent } from 'rxjs';
 import { User } from '../../models/user';
 import { Store } from '@ngxs/store';
-import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay } from 'rxjs/operators';
+import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay, shareReplay } from 'rxjs/operators';
 import { TodoList } from '../../models/todo-list';
 import { SessionUtils } from '../../utils/session-utils.service';
 import { Router } from '@angular/router';
@@ -66,22 +66,37 @@ export class HomeComponent {
   @ViewChild('container')
   private container: MatSidenavContainer;
 
-  constructor(store: Store, sessionUtils: SessionUtils, router: Router) {
+  private firstTodoList$: Observable<TodoList>;
+
+  constructor(
+    store: Store,
+    sessionUtils: SessionUtils,
+    router: Router
+  ) {
+    this.firstTodoList$ = this.todoListNames$.pipe(
+      map(todoListNames => todoListNames.length > 0 ? _.first(todoListNames) : undefined),
+      withLatestFrom(this.user$),
+      map(([listName, user]) => user.todoLists[listName]),
+      shareReplay(1)
+    );
+
+    // Wait for the list of todo lists to be updated...
     this.todoLists$.pipe(
-      map(todoLists => _.keys(todoLists))
+      map(todoLists => _.keys(todoLists)),
+      map(todoListNames => _.orderBy(todoListNames)) // Sort the list
     ).subscribe(this.todoListNames$);
 
-    // Highlight the first todo list
+    // Highlight the first todo list initially
     this.user$.pipe(
+      mergeMapTo(this.firstTodoList$),
+      filter(Boolean),
       take(1),
-      map(user => user.todoLists),
-      filter(todoLists => _.keys(todoLists).length > 0)
-    ).subscribe(todoLists => this.activeTodoList$.next(todoLists[_.keys(todoLists)[0]]));
+    ).subscribe(todoList => this.activeTodoList$.next(todoList));
 
     // Wait for the user to press the add list button...
     this.onAddList$.pipe(
       mapTo(true)
-    ).subscribe(this.showNewListNameInput$);
+    ).subscribe(this.showNewListNameInput$); // Show the list name input
 
     // Wait for a list to be changed...
     this.onListChanged$.pipe(
@@ -90,14 +105,16 @@ export class HomeComponent {
 
     // Wait for the user to press the delete button...
     this.onDeleteList$.pipe(
-      withLatestFrom(this.user$)
-    ).subscribe(([listName, user]) => {
-      // Delete the list
-      user.todoLists = _.omit(user.todoLists, [listName]);
+      withLatestFrom(this.user$),
+      mergeMap(([listName, user]) => {
+        // Delete the list
+        user.todoLists = _.omit(user.todoLists, [listName]);
 
-      // Update the store
-      store.dispatch(new UpdateUserAction(user));
-    });
+        // Update the store
+        return store.dispatch(new UpdateUserAction(user));
+      }),
+      mergeMap(() => this.firstTodoList$.pipe(take(1)))
+    ).subscribe(firstTodoList => this.activeTodoList$.next(firstTodoList));
 
     // Wait for the new list field to be blurred...
     this.onNewListNameInputBlur$.pipe(
@@ -120,10 +137,8 @@ export class HomeComponent {
 
         store.dispatch(new UpdateUserAction(user));
 
-        // Focus the new list if this is the first one
-        if (_.keys(user.todoLists).length === 1) {
-          this.activeTodoList$.next(user.todoLists[newListName]);
-        }
+        // Focus the new list
+        this.activeTodoList$.next(user.todoLists[newListName]);
       }
 
       // Clear the input box and hide it

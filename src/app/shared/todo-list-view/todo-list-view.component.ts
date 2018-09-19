@@ -1,5 +1,5 @@
-import { Component, Input, EventEmitter, Output, ChangeDetectorRef } from '@angular/core';
-import { StateEmitter, EventSource, OnInit } from '@lithiumjs/angular';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { StateEmitter, EventSource } from '@lithiumjs/angular';
 import { Subject, Observable } from 'rxjs';
 import { TodoList } from '../../models/todo-list';
 import { withLatestFrom, delay, filter } from 'rxjs/operators';
@@ -12,9 +12,6 @@ import * as _ from 'lodash';
 })
 export class TodoListViewComponent {
 
-  @OnInit()
-  private onInit$: Observable<void>;
-
   @EventSource()
   private onCompleteItem$: Observable<string>;
 
@@ -26,7 +23,7 @@ export class TodoListViewComponent {
   @Input('list')
   private list$: Subject<TodoList>;
 
-  constructor(changeDetector: ChangeDetectorRef) {
+  constructor() {
     // Wait for an item to be checked...
     this.onCompleteItem$.pipe(
       withLatestFrom(this.list$),

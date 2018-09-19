@@ -28,7 +28,7 @@
           <span>Your todo lists</span>
         </h1>
 
-        <ng-container *ngFor="let listName of todoListNames | orderBy">
+        <ng-container *ngFor="let listName of todoListNames">
           <mat-radio-button [value]="user.todoLists[listName]">
               <span class="list-name">{{listName}}</span>
               <button mat-icon-button 

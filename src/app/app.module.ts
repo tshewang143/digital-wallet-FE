@@ -1,4 +1,3 @@
-import { OrderByPipe } from './shared/order-by.pipe';
 import { RegisterComponent } from './pages/register/register.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -35,8 +34,7 @@ import { TodoListViewComponent } from './shared/todo-list-view/todo-list-view.co
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    TodoListViewComponent,
-    OrderByPipe
+    TodoListViewComponent
   ],
   imports: [
     BrowserModule,
@@ -63,8 +61,7 @@ import { TodoListViewComponent } from './shared/todo-list-view/todo-list-view.co
   providers: [
     UserUtils,
     SessionUtils,
-    AuthGuard,
-    OrderByPipe
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })
