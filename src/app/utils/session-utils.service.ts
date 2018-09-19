@@ -37,6 +37,7 @@ export class SessionUtils {
   }
 
   public init(user: User): Observable<Session> {
+    this._session = <any>{};
     this._session.expiresDate = moment().add(1, 'day').toISOString();
     this._session.user = user;
 

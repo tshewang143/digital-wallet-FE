@@ -4,6 +4,7 @@
 html, body {
     margin: 0;
     padding: 0;
+    height: 100vh;
 }
 
 .github-icon {
@@ -18,4 +19,10 @@ mat-form-field.mat-inline-label {
     &.mat-focused label.mat-form-field-label {
         visibility: hidden;
     }
+}
+
+app-root > *:last-child {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }

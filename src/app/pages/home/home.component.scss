@@ -1,11 +1,18 @@
 :host::ng-deep, mat-sidenav-container {
     overflow: hidden;
-    height: 100vh;
+    height: 100%;
 }
 
 mat-toolbar {
     display: flex;
     align-items: center;
+
+    .title {
+        max-width: 50%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
 
     .spacer {
         flex-grow: 2;
@@ -14,6 +21,8 @@ mat-toolbar {
 
 #sidenav {
     width: 15%;
+    min-width: 150px;
+    overflow: hidden;
 
     mat-list {
         padding-top: 0;
@@ -79,6 +88,9 @@ mat-toolbar {
 
         & .mat-radio-label-content {
             text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 90%;
         }
     }
 
