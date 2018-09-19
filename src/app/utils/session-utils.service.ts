@@ -22,6 +22,7 @@ export class SessionUtils {
   private session$: Observable<Session>;
 
   constructor(private store: Store) {
+    // Wait for the session to change...
     this.session$.pipe(
       filter(Boolean)
     ).subscribe(session => {
@@ -36,10 +37,8 @@ export class SessionUtils {
   }
 
   public init(user: User): Observable<Session> {
-    this._session = {
-      expiresDate: moment().add(1, 'day').toISOString(),
-      user: user
-    };
+    this._session.expiresDate = moment().add(1, 'day').toISOString();
+    this._session.user = user;
 
     this.store.dispatch(new SetAction(this._session));
 
