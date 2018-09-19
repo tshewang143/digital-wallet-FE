@@ -45,7 +45,7 @@ export class HomeComponent {
   @Select(SessionState.getTodoLists)
   private todoLists$: Observable<User.TodoListDictionary>;
 
-  @StateEmitter()
+  @StateEmitter({ initialValue: [] })
   private todoListNames$: Subject<string[]>;
 
   @StateEmitter()
@@ -76,7 +76,7 @@ export class HomeComponent {
     this.firstTodoList$ = this.todoListNames$.pipe(
       map(todoListNames => todoListNames.length > 0 ? _.first(todoListNames) : undefined),
       withLatestFrom(this.user$),
-      map(([listName, user]) => user.todoLists[listName]),
+      map(([listName, user]) => listName ? user.todoLists[listName] : undefined),
       shareReplay(1)
     );
 
