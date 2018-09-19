@@ -30,7 +30,12 @@
 
         <ng-container *ngFor="let listName of todoListNames | orderBy">
           <mat-radio-button [value]="user.todoLists[listName]">
-              {{listName}}
+              <span class="list-name">{{listName}}</span>
+              <button mat-icon-button 
+                      *ngIf="activeTodoList === user.todoLists[listName]"
+                      (click)="onDeleteList(listName)">
+                  <mat-icon>delete</mat-icon>
+              </button>
           </mat-radio-button>
         </ng-container>
 

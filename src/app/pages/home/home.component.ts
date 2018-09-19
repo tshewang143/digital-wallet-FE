@@ -35,6 +35,9 @@ export class HomeComponent {
   @EventSource()
   private onListChanged$: Observable<TodoList>;
 
+  @EventSource()
+  private onDeleteList$: Observable<string>;
+
   @StateEmitter.Alias({ path: 'user$' }) // TODO - Explicit self-proxy shouldn't be needed here
   @Select(SessionState.getUser)
   private user$: Observable<User>;
@@ -84,6 +87,17 @@ export class HomeComponent {
     this.onListChanged$.pipe(
       mergeMap(() => this.user$.pipe(take(1)))
     ).subscribe(user => store.dispatch(new UpdateUserAction(user))); // Update the store
+
+    // Wait for the user to press the delete button...
+    this.onDeleteList$.pipe(
+      withLatestFrom(this.user$)
+    ).subscribe(([listName, user]) => {
+      // Delete the list
+      user.todoLists = _.omit(user.todoLists, [listName]);
+
+      // Update the store
+      store.dispatch(new UpdateUserAction(user));
+    });
 
     // Wait for the new list field to be blurred...
     this.onNewListNameInputBlur$.pipe(
