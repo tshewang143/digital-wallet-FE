@@ -4,31 +4,22 @@ import { map, mergeMap, catchError, take } from 'rxjs/operators';
 import { StateEmitter, EventSource } from '@lithiumjs/angular';
 import { Router } from '@angular/router';
 import { UserUtils } from '../../utils/user-utils.service';
+import { EntryBasePage } from '../base/entry/entry-base-page';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
-
-  @EventSource()
-  private onSubmit$: Observable<void>;
-
-  @StateEmitter()
-  private username$: Subject<string>;
-
-  @StateEmitter()
-  private password$: Subject<string>;
-
-  @StateEmitter({ readOnly: true })
-  private loginEnabled$: Subject<boolean>;
+export class LoginComponent extends EntryBasePage {
 
   constructor(router: Router, userUtils: UserUtils) {
+    super();
+
     // Only enable the login button if the user entered both a username and password
     combineLatest(this.username$, this.password$).pipe(
       map(([username, password]) => !!username && !!password)
-    ).subscribe(this.loginEnabled$);
+    ).subscribe(this.formSubmissionEnabled$);
 
     this.onSubmit$.pipe(
       mergeMap(() => combineLatest(this.username$, this.password$).pipe(take(1))),

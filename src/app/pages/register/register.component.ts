@@ -6,33 +6,25 @@ import { LocalStorage } from 'ngx-store';
 import { User } from '../../models/user';
 import { Router } from '@angular/router';
 import { UserUtils } from '../../utils/user-utils.service';
+import { EntryBasePage } from '../base/entry/entry-base-page';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent {
-  @EventSource()
-  private onSubmit$: Observable<void>;
+export class RegisterComponent extends EntryBasePage {
 
   @StateEmitter()
   private name$: Subject<string>;
 
-  @StateEmitter()
-  private username$: Subject<string>;
-
-  @StateEmitter()
-  private password$: Subject<string>;
-
-  @StateEmitter({ readOnly: true })
-  private registerEnabled$: Subject<boolean>;
-
   constructor(router: Router, userUtils: UserUtils) {
+    super();
+
     // Only enable the login button if the user entered both a username and password
     combineLatest(this.username$, this.password$).pipe(
       map(([username, password]) => !!username && !!password)
-    ).subscribe(this.registerEnabled$);
+    ).subscribe(this.formSubmissionEnabled$);
 
     this.onSubmit$.pipe(
       mergeMap(() => combineLatest(this.name$, this.username$, this.password$).pipe(take(1))),
