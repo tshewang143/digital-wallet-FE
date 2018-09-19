@@ -1,9 +1,9 @@
 import { UpdateUserAction } from './../../store/session/session.actions';
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { StateEmitter, EventSource } from '@lithiumjs/angular';
+import { StateEmitter, EventSource, AfterViewInit } from '@lithiumjs/angular';
 import { Select } from '@ngxs/store';
 import { SessionState } from '../../store/session/session.store';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, merge, fromEvent } from 'rxjs';
 import { User } from '../../models/user';
 import { Store } from '@ngxs/store';
 import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import { TodoList } from '../../models/todo-list';
 import { SessionUtils } from '../../utils/session-utils.service';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { MatSidenavContainer } from '@angular/material';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +19,9 @@ import * as _ from 'lodash';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
+
+  @AfterViewInit()
+  private afterViewInit$: Observable<void>;
 
   @EventSource()
   private onAddList$: Observable<void>;
@@ -27,6 +31,9 @@ export class HomeComponent {
 
   @EventSource()
   private onLogout$: Observable<void>;
+
+  @EventSource()
+  private onListChanged$: Observable<TodoList>;
 
   @StateEmitter.Alias({ path: 'user$' }) // TODO - Explicit self-proxy shouldn't be needed here
   @Select(SessionState.getUser)
@@ -47,7 +54,14 @@ export class HomeComponent {
   @StateEmitter()
   private showNewListNameInput$: Subject<boolean>;
 
-  @ViewChild('newListNameInput') private newListNameInput: ElementRef;
+  @StateEmitter()
+  private showMenu$: Subject<boolean>;
+
+  @ViewChild('newListNameInput')
+  private newListNameInput: ElementRef;
+
+  @ViewChild('container')
+  private container: MatSidenavContainer;
 
   constructor(store: Store, sessionUtils: SessionUtils, router: Router) {
     this.todoLists$.pipe(
@@ -61,10 +75,17 @@ export class HomeComponent {
       filter(todoLists => _.keys(todoLists).length > 0)
     ).subscribe(todoLists => this.activeTodoList$.next(todoLists[_.keys(todoLists)[0]]));
 
+    // Wait for the user to press the add list button...
     this.onAddList$.pipe(
       mapTo(true)
     ).subscribe(this.showNewListNameInput$);
 
+    // Wait for a list to be changed...
+    this.onListChanged$.pipe(
+      mergeMap(() => this.user$.pipe(take(1)))
+    ).subscribe(user => store.dispatch(new UpdateUserAction(user))); // Update the store
+
+    // Wait for the new list field to be blurred...
     this.onNewListNameInputBlur$.pipe(
       mergeMap(() => this.newListName$.pipe(take(1))),
       withLatestFrom(this.user$)
@@ -91,17 +112,32 @@ export class HomeComponent {
         }
       }
 
+      // Clear the input box and hide it
       this.newListName$.next('');
       this.showNewListNameInput$.next(false);
     });
 
+    // Wait for the user to click the logout button...
     this.onLogout$.subscribe(() => {
       sessionUtils.invalidate();
       router.navigate(['']);
     });
 
+    // Wait for showNewListNameInput to become true...
     this.showNewListNameInput$.pipe(
+      filter(Boolean),
       delay(100)
-    ).subscribe(() => this.newListNameInput.nativeElement.focus());
+    ).subscribe(() => this.newListNameInput.nativeElement.focus()); // Focus the input box
+
+    // Workaround for broken MatSidenavContainer resizing in @angular/material
+    // Adapted from: https://github.com/angular/material2/issues/6743#issuecomment-328453963
+    this.afterViewInit$.pipe(
+      delay(0),
+      map(() => this.showMenu$.next(true)),
+      mergeMap(() => merge((<any>this.container)._ngZone.onMicrotaskEmpty, fromEvent(window, 'resize'))),
+    ).subscribe(() => {
+      (<any>this.container)._updateContentMargins();
+      (<any>this.container)._changeDetectorRef.markForCheck();
+    });
   }
 }

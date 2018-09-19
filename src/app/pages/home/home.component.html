@@ -12,8 +12,8 @@
           (click)="onLogout()">Logout</button>
 </mat-toolbar>
 
-<mat-sidenav-container>
-  <mat-sidenav id="sidenav" mode="side" opened autoresize>
+<mat-sidenav-container #container>
+  <mat-sidenav id="sidenav" mode="side" [opened]="showMenu">
     <mat-radio-group id="sidenav-radio-group" [(ngModel)]="activeTodoList">
 
       <mat-list>
@@ -36,7 +36,7 @@
 
         <mat-list-item id="new-list-item" [hidden]="!showNewListNameInput">
           <input #newListNameInput
-                 mat-input
+                 matInput
                  [(ngModel)]="newListName"
                  (keydown.enter)="newListNameInput.blur()"
                  (blur)="onNewListNameInputBlur()">
@@ -56,7 +56,10 @@
   </mat-sidenav>
 
   <mat-sidenav-content id="container">
-    <app-todo-list-view [hidden]="!activeTodoList" [list]="activeTodoList"></app-todo-list-view>
+    <app-todo-list-view *ngIf="activeTodoList" 
+                        [list]="activeTodoList"
+                        (listChanged)="onListChanged($event)">
+    </app-todo-list-view>
 
     <div [hidden]="activeTodoList" id="empty-state">
       <mat-icon id="empty-icon">insert_drive_file</mat-icon>

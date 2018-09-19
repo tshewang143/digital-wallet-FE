@@ -106,6 +106,10 @@ mat-list-item[hidden] {
         align-items: center;
         flex-direction: column;
 
+        &[hidden] {
+            display: none;
+        }
+
         > * {
             padding-bottom: 0.2em;
         }
