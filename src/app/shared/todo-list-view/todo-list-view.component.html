@@ -1,5 +1,9 @@
 <div id="container">
   <mat-list id="todo-list">
+    <mat-list-item>{{name}}</mat-list-item>
+
+    <mat-divider></mat-divider>
+
     <mat-list-item *ngFor="let todoItem of list.todo">
       <mat-checkbox color="primary" (click)="onCompleteItem(todoItem)">{{todoItem}}</mat-checkbox>
     </mat-list-item>

@@ -22,52 +22,52 @@ import { MatSidenavContainer, MatDialog } from '@angular/material';
 export class HomeComponent {
 
   @AfterViewInit()
-  private afterViewInit$: Observable<void>;
+  private readonly afterViewInit$: Observable<void>;
 
   @EventSource()
-  private onAddList$: Observable<void>;
+  private readonly onAddList$: Observable<void>;
 
   @EventSource()
-  private onNewListNameInputBlur$: Observable<void>;
+  private readonly onNewListNameInputBlur$: Observable<void>;
 
   @EventSource()
-  private onLogout$: Observable<void>;
+  private readonly onLogout$: Observable<void>;
 
   @EventSource()
-  private onListChanged$: Observable<TodoList>;
+  private readonly onListChanged$: Observable<TodoList>;
 
   @EventSource()
-  private onDeleteList$: Observable<string>;
+  private readonly onDeleteList$: Observable<string>;
 
   @StateEmitter.Alias({ path: 'user$' }) // TODO - Explicit self-proxy shouldn't be needed here
   @Select(SessionState.getUser)
-  private user$: Observable<User>;
+  private readonly user$: Observable<User>;
 
   @Select(SessionState.getTodoLists)
-  private todoLists$: Observable<User.TodoListDictionary>;
+  private readonly todoLists$: Observable<User.TodoListDictionary>;
 
   @StateEmitter({ initialValue: [] })
-  private todoListNames$: Subject<string[]>;
+  private readonly todoListNames$: Subject<string[]>;
 
   @StateEmitter()
-  private activeTodoList$: Subject<TodoList>;
+  private readonly activeListName$: Subject<string>;
 
   @StateEmitter({ initialValue: '' })
-  private newListName$: Subject<string>;
+  private readonly newListName$: Subject<string>;
 
   @StateEmitter()
-  private showNewListNameInput$: Subject<boolean>;
+  private readonly showNewListNameInput$: Subject<boolean>;
 
   @StateEmitter()
-  private showMenu$: Subject<boolean>;
+  private readonly showMenu$: Subject<boolean>;
 
   @ViewChild('newListNameInput')
-  private newListNameInput: ElementRef;
+  private readonly newListNameInput: ElementRef;
 
   @ViewChild('container')
-  private container: MatSidenavContainer;
+  private readonly container: MatSidenavContainer;
 
-  private firstTodoList$: Observable<TodoList>;
+  private readonly firstTodoListName$: Observable<string>;
 
   constructor(
     store: Store,
@@ -75,10 +75,9 @@ export class HomeComponent {
     router: Router,
     dialog: MatDialog
   ) {
-    this.firstTodoList$ = this.todoListNames$.pipe(
+    // Get the first todo list name in the list
+    this.firstTodoListName$ = this.todoListNames$.pipe(
       map(todoListNames => todoListNames.length > 0 ? _.first(todoListNames) : undefined),
-      withLatestFrom(this.user$),
-      map(([listName, user]) => listName ? user.todoLists[listName] : undefined),
       shareReplay(1)
     );
 
@@ -86,14 +85,14 @@ export class HomeComponent {
     this.todoLists$.pipe(
       map(todoLists => _.keys(todoLists)),
       map(todoListNames => _.orderBy(todoListNames)) // Sort the list
-    ).subscribe(this.todoListNames$);
+    ).subscribe(this.todoListNames$); // Update the todo list names
 
     // Highlight the first todo list initially
     this.user$.pipe(
-      mergeMapTo(this.firstTodoList$),
+      mergeMapTo(this.firstTodoListName$),
       filter(Boolean),
       take(1),
-    ).subscribe(todoList => this.activeTodoList$.next(todoList));
+    ).subscribe(listName => this.activeListName$.next(listName));
 
     // Wait for the user to press the add list button...
     this.onAddList$.pipe(
@@ -122,8 +121,8 @@ export class HomeComponent {
         // Update the store
         return store.dispatch(new UpdateUserAction(user));
       }),
-      mergeMap(() => this.firstTodoList$.pipe(take(1)))
-    ).subscribe(firstTodoList => this.activeTodoList$.next(firstTodoList));
+      mergeMap(() => this.firstTodoListName$.pipe(take(1)))
+    ).subscribe(listName => this.activeListName$.next(listName)); // Focus the first list
 
     // Wait for the new list field to be blurred...
     this.onNewListNameInputBlur$.pipe(
@@ -147,7 +146,7 @@ export class HomeComponent {
         store.dispatch(new UpdateUserAction(user));
 
         // Focus the new list
-        this.activeTodoList$.next(user.todoLists[newListName]);
+        this.activeListName$.next(newListName);
       }
 
       // Clear the input box and hide it

@@ -20,7 +20,7 @@
 
 <mat-sidenav-container #container>
   <mat-sidenav id="sidenav" mode="side" [opened]="showMenu">
-    <mat-radio-group id="sidenav-radio-group" [(ngModel)]="activeTodoList">
+    <mat-radio-group id="sidenav-radio-group" [(ngModel)]="activeListName">
 
       <mat-list>
         <mat-list-item id="user-info">
@@ -35,10 +35,10 @@
         </h1>
 
         <ng-container *ngFor="let listName of todoListNames">
-          <mat-radio-button [value]="user.todoLists[listName]">
+          <mat-radio-button [value]="listName">
               <span class="list-name">{{listName}}</span>
               <button mat-icon-button 
-                      *ngIf="activeTodoList === user.todoLists[listName]"
+                      *ngIf="activeListName === listName"
                       (click)="onDeleteList(listName)">
                   <mat-icon>delete</mat-icon>
               </button>
@@ -69,12 +69,13 @@
   </mat-sidenav>
 
   <mat-sidenav-content id="container">
-    <app-todo-list-view *ngIf="activeTodoList" 
-                        [list]="activeTodoList"
+    <app-todo-list-view *ngIf="activeListName" 
+                        [list]="user.todoLists[activeListName]"
+                        [name]="activeListName"
                         (listChanged)="onListChanged($event)">
     </app-todo-list-view>
 
-    <div [hidden]="activeTodoList" id="empty-state">
+    <div [hidden]="activeListName" id="empty-state">
       <mat-icon id="empty-icon">insert_drive_file</mat-icon>
       <span>You have no todo lists</span>
       <span>Click the <mat-icon color="accent">add</mat-icon> button to create your first list</span>

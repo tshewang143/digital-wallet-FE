@@ -13,15 +13,19 @@ import * as _ from 'lodash';
 export class TodoListViewComponent {
 
   @EventSource()
-  private onCompleteItem$: Observable<string>;
+  private readonly onCompleteItem$: Observable<string>;
 
   @EventSource()
-  private onAddTask$: Observable<string>;
+  private readonly onAddTask$: Observable<string>;
 
   @Output('listChanged')
   @StateEmitter()
   @Input('list')
-  private list$: Subject<TodoList>;
+  private readonly list$: Subject<TodoList>;
+
+  @StateEmitter()
+  @Input('name')
+  public readonly name$: Subject<string>;
 
   constructor() {
     // Wait for an item to be checked...
