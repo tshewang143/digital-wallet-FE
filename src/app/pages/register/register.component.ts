@@ -7,6 +7,7 @@ import { User } from '../../models/user';
 import { Router } from '@angular/router';
 import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-register',
@@ -18,8 +19,8 @@ export class RegisterComponent extends EntryBasePage {
   @StateEmitter()
   private name$: Subject<string>;
 
-  constructor(router: Router, userUtils: UserUtils) {
-    super();
+  constructor(router: Router, userUtils: UserUtils, snackBar: MatSnackBar) {
+    super(snackBar);
 
     // Only enable the login button if the user entered both a username and password
     combineLatest(this.username$, this.password$).pipe(
@@ -31,8 +32,7 @@ export class RegisterComponent extends EntryBasePage {
       mergeMap(([name, username, password]: [string, string, string]) => {
         return userUtils.register(name, username, password).pipe(
           catchError((error) => {
-            // TODO Error UI
-            console.error(error);
+            this.error$.next(error);
             return empty();
           })
         );
@@ -41,8 +41,7 @@ export class RegisterComponent extends EntryBasePage {
         // Log the user in
         return userUtils.loginAs(user).pipe(
           catchError((error) => {
-            // TODO Error UI
-            console.error(error);
+            this.error$.next(error);
             return empty();
           })
         );

@@ -1,5 +1,7 @@
 import { StateEmitter, EventSource } from '@lithiumjs/angular';
 import { Observable, Subject } from 'rxjs';
+import { MatSnackBar } from '@angular/material';
+import { filter } from 'rxjs/operators';
 
 export abstract class EntryBasePage {
 
@@ -14,4 +16,16 @@ export abstract class EntryBasePage {
 
     @StateEmitter({ readOnly: true })
     protected formSubmissionEnabled$: Subject<boolean>;
+
+    @StateEmitter()
+    protected error$: Subject<string>;
+
+    constructor(snackBar: MatSnackBar) {
+        this.error$.pipe(
+            filter(Boolean)
+        ).subscribe(error => {
+            console.error(error);
+            snackBar.open(error, 'Dismiss', { verticalPosition: 'top' });
+        });
+    }
 }

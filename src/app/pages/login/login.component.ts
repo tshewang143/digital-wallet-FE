@@ -5,6 +5,7 @@ import { StateEmitter, EventSource } from '@lithiumjs/angular';
 import { Router } from '@angular/router';
 import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-login',
@@ -13,8 +14,8 @@ import { EntryBasePage } from '../base/entry/entry-base-page';
 })
 export class LoginComponent extends EntryBasePage {
 
-  constructor(router: Router, userUtils: UserUtils) {
-    super();
+  constructor(router: Router, userUtils: UserUtils, snackBar: MatSnackBar) {
+    super(snackBar);
 
     // Only enable the login button if the user entered both a username and password
     combineLatest(this.username$, this.password$).pipe(
@@ -26,8 +27,7 @@ export class LoginComponent extends EntryBasePage {
       mergeMap(([username, password]) => {
         return userUtils.login(username, password).pipe(
           catchError((error) => {
-            // TODO - Set error in UI
-            console.error(error);
+            this.error$.next(error);
             return empty();
           })
         );

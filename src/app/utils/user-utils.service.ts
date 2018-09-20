@@ -32,7 +32,7 @@ export class UserUtils {
     const foundUser = this.getUserById(user.id, user.secret);
 
     if (!foundUser) {
-      return throwError(`User not found: ${user.id}.`);
+      return throwError(`User "${user.id}" not found.`);
     }
 
     if (user.secret !== foundUser.secret) {
@@ -65,7 +65,7 @@ export class UserUtils {
 
   public register(name: string, id: string, password: string): Observable<User> {
     if (this.getUserById(id)) {
-      return throwError(`User already exists ${id}.`);
+      return throwError(`User "${id}" already exists.`);
     }
 
     const user = {
