@@ -1,3 +1,4 @@
+import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
 import { UpdateUserAction } from './../../store/session/session.actions';
 import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { StateEmitter, EventSource, AfterViewInit } from '@lithiumjs/angular';
@@ -11,7 +12,7 @@ import { TodoList } from '../../models/todo-list';
 import { SessionUtils } from '../../utils/session-utils.service';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
-import { MatSidenavContainer } from '@angular/material';
+import { MatSidenavContainer, MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-home',
@@ -71,7 +72,8 @@ export class HomeComponent {
   constructor(
     store: Store,
     sessionUtils: SessionUtils,
-    router: Router
+    router: Router,
+    dialog: MatDialog
   ) {
     this.firstTodoList$ = this.todoListNames$.pipe(
       map(todoListNames => todoListNames.length > 0 ? _.first(todoListNames) : undefined),
@@ -105,6 +107,13 @@ export class HomeComponent {
 
     // Wait for the user to press the delete button...
     this.onDeleteList$.pipe(
+      mergeMap((listName): Observable<string> => {
+        // Confirm with the user that they want to delete the list...
+        return dialog.open(DeleteDialogComponent).afterClosed().pipe(
+          filter(Boolean),
+          mapTo(listName)
+        );
+      }),
       withLatestFrom(this.user$),
       mergeMap(([listName, user]) => {
         // Delete the list

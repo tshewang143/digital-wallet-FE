@@ -14,7 +14,9 @@ import {
   MatRadioModule,
   MatIconModule,
   MatExpansionModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatDialogModule,
+  MAT_DIALOG_DEFAULT_OPTIONS
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -28,6 +30,7 @@ import { UserUtils } from './utils/user-utils.service';
 import { SessionUtils } from './utils/session-utils.service';
 import { AuthGuard } from './guards/auth-guard.service';
 import { TodoListViewComponent } from './shared/todo-list-view/todo-list-view.component';
+import { DeleteDialogComponent } from './pages/home/delete-dialog/delete-dialog.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +38,11 @@ import { TodoListViewComponent } from './shared/todo-list-view/todo-list-view.co
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    TodoListViewComponent
+    TodoListViewComponent,
+    DeleteDialogComponent
+  ],
+  entryComponents: [
+    DeleteDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -52,6 +59,7 @@ import { TodoListViewComponent } from './shared/todo-list-view/todo-list-view.co
     MatIconModule,
     MatExpansionModule,
     MatSnackBarModule,
+    MatDialogModule,
 
     NgxsModule.forRoot([
       SessionState
@@ -61,6 +69,10 @@ import { TodoListViewComponent } from './shared/todo-list-view/todo-list-view.co
     RoutesModule
   ],
   providers: [
+    {
+      provide: MAT_DIALOG_DEFAULT_OPTIONS,
+      useValue: { hasBackdrop: false }
+    },
     UserUtils,
     SessionUtils,
     AuthGuard

@@ -1,18 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-}
-
-.github-icon {
-    background: url('assets/GitHub-Mark-Light-120px-plus.png') no-repeat center;
-    background-size: contain;
-    height: 24px;
-    width: 24px;
-}
+// @angular/material style overrides
 
 mat-form-field.mat-inline-label {
 
@@ -21,8 +10,27 @@ mat-form-field.mat-inline-label {
     }
 }
 
+mat-dialog-content {
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+}
+
+// Custom styles
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
 app-root > *:last-child {
     display: flex;
     flex-direction: column;
     height: 100%;
+}
+
+.github-icon {
+    background: url('assets/GitHub-Mark-Light-120px-plus.png') no-repeat center;
+    background-size: contain;
+    height: 24px;
+    width: 24px;
 }
