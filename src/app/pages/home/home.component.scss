@@ -1,10 +1,20 @@
+$theme-color: #3f51b5;
+
 :host::ng-deep, mat-sidenav-container {
     height: 100%;
 }
 
 mat-toolbar {
-    display: flex;
-    align-items: center;
+    padding: 0 8px;
+
+    .toggle-menu-button {
+        margin-right: 8px;
+        
+        &.mat-button-toggle-checked {
+            color: #fff;
+            background-color: lighten($theme-color, 10%);
+        }
+    }
 
     .title {
         max-width: 50%;
@@ -102,7 +112,7 @@ mat-toolbar {
     }
 
     &.mat-radio-checked {
-        background: #3f51b5;
+        background: $theme-color;
         color: white;
         font-weight: bold;
     }

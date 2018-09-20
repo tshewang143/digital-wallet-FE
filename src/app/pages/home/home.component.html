@@ -1,4 +1,10 @@
 <mat-toolbar color="primary">
+    <button mat-icon-button
+            class="toggle-menu-button"
+            [ngClass]="{ 'mat-button-toggle-checked': showMenu }"
+            (click)="showMenu = !showMenu">
+      <mat-icon>menu</mat-icon>
+    </button>
   <span class="title">@lithiumjs/angular Todo App</span>
   <span class="spacer"></span>
   <a mat-icon-button href="https://github.com/lVlyke/lithium-angular" target="_blank">

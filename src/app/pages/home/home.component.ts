@@ -170,7 +170,7 @@ export class HomeComponent {
     // Workaround for broken MatSidenavContainer resizing in @angular/material
     // Adapted from: https://github.com/angular/material2/issues/6743#issuecomment-328453963
     this.afterViewInit$.pipe(
-      delay(0),
+      delay(850),
       map(() => this.showMenu$.next(true)),
       mergeMap(() => merge((<any>this.container)._ngZone.onMicrotaskEmpty, fromEvent(window, 'resize'))),
     ).subscribe(() => {
