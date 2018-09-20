@@ -1,0 +1,6 @@
+mat-list::ng-deep .mat-list-item {
+
+    > .mat-list-item-content, &.mat-subheader {
+        padding-left: 0;
+    }
+}

@@ -31,6 +31,7 @@ import { SessionUtils } from './utils/session-utils.service';
 import { AuthGuard } from './guards/auth-guard.service';
 import { TodoListViewComponent } from './shared/todo-list-view/todo-list-view.component';
 import { DeleteDialogComponent } from './pages/home/delete-dialog/delete-dialog.component';
+import { HelpDialogComponent } from './pages/home/help-dialog/help-dialog.component';
 
 @NgModule({
   declarations: [
@@ -39,10 +40,12 @@ import { DeleteDialogComponent } from './pages/home/delete-dialog/delete-dialog.
     RegisterComponent,
     HomeComponent,
     TodoListViewComponent,
-    DeleteDialogComponent
+    DeleteDialogComponent,
+    HelpDialogComponent
   ],
   entryComponents: [
-    DeleteDialogComponent
+    DeleteDialogComponent,
+    HelpDialogComponent
   ],
   imports: [
     BrowserModule,

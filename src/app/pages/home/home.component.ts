@@ -1,3 +1,4 @@
+import { HelpDialogComponent } from './help-dialog/help-dialog.component';
 import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
 import { UpdateUserAction } from './../../store/session/session.actions';
 import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
@@ -38,6 +39,9 @@ export class HomeComponent {
 
   @EventSource()
   private readonly onDeleteList$: Observable<string>;
+
+  @EventSource()
+  private readonly onHelp$: Observable<void>;
 
   @StateEmitter.Alias({ path: 'user$' }) // TODO - Explicit self-proxy shouldn't be needed here
   @Select(SessionState.getUser)
@@ -153,6 +157,11 @@ export class HomeComponent {
       this.newListName$.next('');
       this.showNewListNameInput$.next(false);
     });
+
+    // Wait for the user to click the help button...
+    this.onHelp$.pipe(
+      mergeMap(() => dialog.open(HelpDialogComponent).afterClosed())
+    ).subscribe();
 
     // Wait for the user to click the logout button...
     this.onLogout$.subscribe(() => {

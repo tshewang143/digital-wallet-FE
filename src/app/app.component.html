@@ -1,2 +1,7 @@
-<router-outlet></router-outlet>
+<div *ngIf="!user?.hideBanner" id="footer">
+    <a mat-button href="https://github.com/lVlyke/lithium-angular" target="_blank" color="primary">
+        Powered by <strong>Lithium for Angular</strong>
+    </a>
+</div>
 
+<router-outlet></router-outlet>

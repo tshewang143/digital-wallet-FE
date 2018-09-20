@@ -1,6 +1,6 @@
 import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Session } from '../../models/session';
-import { SetAction, InvalidateAction, UpdateUserAction } from './session.actions';
+import { SetAction, InvalidateAction, UpdateUserAction, HideBannerAction } from './session.actions';
 import { User } from '../../models/user';
 
 @State<Session>({
@@ -19,6 +19,11 @@ export class SessionState {
         return session ? session.user.todoLists : undefined;
     }
 
+    @Selector()
+    public static hideBanner(session: Session): boolean {
+        return session ? session.user.hideBanner : false;
+    }
+
     @Action(SetAction)
     public set(context: SessionState.Context, { session }: SetAction) {
         context.setState(session);
@@ -32,6 +37,13 @@ export class SessionState {
     @Action(UpdateUserAction)
     public updateUser(context: SessionState.Context, action: UpdateUserAction) {
         context.patchState(action);
+    }
+
+    @Action(HideBannerAction)
+    public hideBanner(context: SessionState.Context, { hideBanner }: HideBannerAction) {
+        const session = context.getState();
+        session.user.hideBanner = hideBanner;
+        context.patchState(session);
     }
 }
 

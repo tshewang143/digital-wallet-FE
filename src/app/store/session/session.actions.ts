@@ -16,3 +16,9 @@ export class UpdateUserAction {
 
     constructor(public user: User) {}
 }
+
+export class HideBannerAction {
+    public static readonly type = '[SessionState] Hide Banner';
+
+    constructor(public hideBanner: boolean) {}
+}

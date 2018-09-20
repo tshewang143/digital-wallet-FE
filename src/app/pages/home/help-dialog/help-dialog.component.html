@@ -1,0 +1,16 @@
+<mat-dialog-content>
+  This app was built to show how <a href="https://github.com/lVlyke/lithium-angular" target="_blank" color="primary">@lithiumjs/angular</a> can be used to write completely reactive Angular components without any boilerplate.
+</mat-dialog-content>
+
+<mat-list>
+  <mat-list-item mat-subheader>Settings</mat-list-item>
+  <mat-divider></mat-divider>
+
+  <mat-list-item>
+    <mat-checkbox [(ngModel)]="hideBanner">Hide banner</mat-checkbox>
+  </mat-list-item>
+</mat-list>
+
+<mat-dialog-actions>
+  <button mat-button color="primary" mat-dialog-close>Done</button>
+</mat-dialog-actions>

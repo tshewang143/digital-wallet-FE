@@ -6,6 +6,7 @@ export interface User {
     name: string;
     color: string;
     todoLists: User.TodoListDictionary;
+    hideBanner?: boolean;
 }
 
 export namespace User {
