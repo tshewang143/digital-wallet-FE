@@ -5,7 +5,7 @@ import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/co
 import { StateEmitter, EventSource, AfterViewInit } from '@lithiumjs/angular';
 import { Select } from '@ngxs/store';
 import { SessionState } from '../../store/session/session.store';
-import { Observable, Subject, merge, fromEvent } from 'rxjs';
+import { Observable, Subject, merge, fromEvent, BehaviorSubject } from 'rxjs';
 import { User } from '../../models/user';
 import { Store } from '@ngxs/store';
 import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay, shareReplay } from 'rxjs/operators';
@@ -79,6 +79,9 @@ export class HomeComponent {
     router: Router,
     dialog: MatDialog
   ) {
+    const deleteDialogOpened$ = new BehaviorSubject<boolean>(false);
+    const helpDialogOpened$ = new BehaviorSubject<boolean>(false);
+
     // Get the first todo list name in the list
     this.firstTodoListName$ = this.todoListNames$.pipe(
       map(todoListNames => todoListNames.length > 0 ? _.first(todoListNames) : undefined),
@@ -110,7 +113,11 @@ export class HomeComponent {
 
     // Wait for the user to press the delete button...
     this.onDeleteList$.pipe(
-      mergeMap((listName): Observable<string> => {
+      withLatestFrom(deleteDialogOpened$),
+      filter(([, opened]) => !opened),
+      mergeMap(([listName]: [string, boolean]): Observable<string> => {
+        deleteDialogOpened$.next(true);
+
         // Confirm with the user that they want to delete the list...
         return dialog.open(DeleteDialogComponent).afterClosed().pipe(
           filter(Boolean),
@@ -126,7 +133,12 @@ export class HomeComponent {
         return store.dispatch(new UpdateUserAction(user));
       }),
       mergeMap(() => this.firstTodoListName$.pipe(take(1)))
-    ).subscribe(listName => this.activeListName$.next(listName)); // Focus the first list
+    ).subscribe((listName) => {
+      // Focus the first list
+      this.activeListName$.next(listName);
+
+      deleteDialogOpened$.next(false);
+    });
 
     // Wait for the new list field to be blurred...
     this.onNewListNameInputBlur$.pipe(
@@ -160,8 +172,14 @@ export class HomeComponent {
 
     // Wait for the user to click the help button...
     this.onHelp$.pipe(
-      mergeMap(() => dialog.open(HelpDialogComponent).afterClosed())
-    ).subscribe();
+      mergeMap(() => helpDialogOpened$.pipe(take(1))),
+      filter(opened => !opened),
+      mergeMap(() => {
+        helpDialogOpened$.next(true);
+
+        return dialog.open(HelpDialogComponent).afterClosed();
+      })
+    ).subscribe(() => helpDialogOpened$.next(false));
 
     // Wait for the user to click the logout button...
     this.onLogout$.subscribe(() => {
