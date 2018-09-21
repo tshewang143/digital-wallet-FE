@@ -2,7 +2,7 @@ import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { StateEmitter, EventSource } from '@lithiumjs/angular';
 import { Subject, Observable } from 'rxjs';
 import { TodoList } from '../../models/todo-list';
-import { withLatestFrom, delay, filter, distinctUntilChanged } from 'rxjs/operators';
+import { withLatestFrom, delay, filter, distinctUntilChanged, bufferTime, map } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { MatCheckbox } from '@angular/material';
 
@@ -29,15 +29,21 @@ export class TodoListViewComponent {
   public readonly name$: Subject<string>;
 
   constructor() {
-    // Wait for an item to be checked...
+    // Wait for items to be checked...
     this.onCompleteItem$.pipe(
-      withLatestFrom(this.list$),
-      delay(900)
-    ).subscribe(([[index, checkbox], list]: [[number, MatCheckbox], TodoList]) => {
-      // Move the item from the todo list to the completed list
-      const [item] = list.todo.splice(index, 1);
-      list.completed.push(item);
-      checkbox.checked = false;
+      bufferTime(900),
+      withLatestFrom(this.list$)
+    ).subscribe(([collectedItems, list]: [[number, MatCheckbox][], TodoList]) => {
+      collectedItems.forEach(([index, checkbox]) => {
+        // Move the item from the todo list to the completed list
+        const item = list.todo[index];
+        delete list.todo[index];
+        list.completed.push(item);
+        checkbox.checked = false;
+      });
+
+      // Filter out the deleted items
+      list.todo = list.todo.filter(Boolean);
 
       this.list$.next(list);
     });
