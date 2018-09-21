@@ -69,11 +69,13 @@
   </mat-sidenav>
 
   <mat-sidenav-content id="container">
-    <app-todo-list-view *ngIf="activeListName" 
-                        [list]="user.todoLists[activeListName]"
-                        [name]="activeListName"
-                        (listChanged)="onListChanged($event)">
-    </app-todo-list-view>
+    <ng-container *ngFor="let listName of todoListNames">
+      <app-todo-list-view *ngIf="activeListName === listName" 
+                          [list]="user.todoLists[listName]"
+                          [name]="listName"
+                          (listChanged)="onListChanged($event)">
+      </app-todo-list-view>
+    </ng-container>
 
     <div [hidden]="activeListName" id="empty-state">
       <mat-icon id="empty-icon">insert_drive_file</mat-icon>

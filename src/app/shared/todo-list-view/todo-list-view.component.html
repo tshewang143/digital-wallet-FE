@@ -4,8 +4,12 @@
 
     <mat-divider></mat-divider>
 
-    <mat-list-item *ngFor="let todoItem of list.todo">
-      <mat-checkbox color="primary" (click)="onCompleteItem(todoItem)">{{todoItem}}</mat-checkbox>
+    <mat-list-item *ngFor="let todoItem of list.todo; let i = index">
+      <mat-checkbox #checkbox
+                    color="primary"
+                    (click)="checkbox.checked ? $event.preventDefault() : onCompleteItem([i, checkbox])">
+        {{todoItem}}
+      </mat-checkbox>
     </mat-list-item>
   </mat-list>
 
