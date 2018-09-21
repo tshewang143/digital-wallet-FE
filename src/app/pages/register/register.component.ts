@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { StateEmitter, EventSource } from '@lithiumjs/angular';
-import { Subject, combineLatest, Observable, empty } from 'rxjs';
+import { Subject, combineLatest, Observable, empty, BehaviorSubject } from 'rxjs';
 import { map, mergeMap, catchError, take } from 'rxjs/operators';
 import { LocalStorage } from 'ngx-store';
 import { User } from '../../models/user';
@@ -20,12 +20,12 @@ export class RegisterComponent extends EntryBasePage {
   private name$: Subject<string>;
 
   constructor(router: Router, userUtils: UserUtils, snackBar: MatSnackBar) {
-    super(snackBar);
+    // Create a proxy subejct that can be passed to super()
+    const nameField$ = new BehaviorSubject<string>(undefined);
 
-    // Only enable the login button if the user entered both a username and password
-    combineLatest(this.username$, this.password$).pipe(
-      map(([username, password]) => !!username && !!password)
-    ).subscribe(this.formSubmissionEnabled$);
+    super(snackBar, nameField$);
+
+    this.name$.subscribe(nameField$);
 
     this.onSubmit$.pipe(
       mergeMap(() => combineLatest(this.name$, this.username$, this.password$).pipe(take(1))),

@@ -17,11 +17,6 @@ export class LoginComponent extends EntryBasePage {
   constructor(router: Router, userUtils: UserUtils, snackBar: MatSnackBar) {
     super(snackBar);
 
-    // Only enable the login button if the user entered both a username and password
-    combineLatest(this.username$, this.password$).pipe(
-      map(([username, password]) => !!username && !!password)
-    ).subscribe(this.formSubmissionEnabled$);
-
     this.onSubmit$.pipe(
       mergeMap(() => combineLatest(this.username$, this.password$).pipe(take(1))),
       mergeMap(([username, password]) => {
