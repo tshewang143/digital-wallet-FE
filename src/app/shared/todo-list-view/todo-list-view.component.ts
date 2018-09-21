@@ -2,7 +2,7 @@ import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { StateEmitter, EventSource } from '@lithiumjs/angular';
 import { Subject, Observable } from 'rxjs';
 import { TodoList } from '../../models/todo-list';
-import { withLatestFrom, delay, filter, distinctUntilChanged, bufferTime, map } from 'rxjs/operators';
+import { withLatestFrom, filter, bufferTime, map } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { MatCheckbox } from '@angular/material';
 
