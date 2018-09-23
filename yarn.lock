@@ -271,9 +271,9 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@lithiumjs/angular@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@lithiumjs/angular/-/angular-2.0.0.tgz#81de67bb8813bbf4870371e71a305d90f250fdd2"
+"@lithiumjs/angular@^2.1.0-rc.0":
+  version "2.1.0-rc.0"
+  resolved "https://registry.yarnpkg.com/@lithiumjs/angular/-/angular-2.1.0-rc.0.tgz#94223c966e2b4c01448db8eb78448a4156b5fa1f"
 
 "@ngtools/webpack@6.1.5":
   version "6.1.5"

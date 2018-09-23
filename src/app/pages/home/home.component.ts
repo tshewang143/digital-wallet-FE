@@ -43,7 +43,7 @@ export class HomeComponent {
   @EventSource()
   private readonly onHelp$: Observable<void>;
 
-  @StateEmitter.Alias({ path: 'user$' }) // TODO - Explicit self-proxy shouldn't be needed here
+  @StateEmitter()
   @Select(SessionState.getUser)
   private readonly user$: Observable<User>;
 

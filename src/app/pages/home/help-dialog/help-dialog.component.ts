@@ -13,10 +13,8 @@ import { HideBannerAction } from '../../../store/session/session.actions';
 })
 export class HelpDialogComponent {
 
+  @StateEmitter.FromSelf()
   @Select(SessionState.hideBanner)
-  public readonly _hideBanner$: Observable<boolean>;
-
-  @StateEmitter.From('_hideBanner$')
   public readonly hideBanner$: Subject<boolean>;
 
   constructor(store: Store) {

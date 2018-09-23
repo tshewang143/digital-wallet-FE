@@ -86,16 +86,25 @@ private readonly list$: Subject<TodoList>;
 Lithium is compatible with other reactive decorator-based libraries like NGXS/Store. The [```HomeComponent```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/home/home.component.ts#L46) illustrates an example of using ```@StateEmitter()``` with ```@Select()``` from NGXS:
 
 ```ts
-@StateEmitter.Alias({ path: 'user$' })
+@StateEmitter()
 @Select(SessionState.getUser)
 private readonly user$: Observable<User>;
 ```
 
-A couple things to note:
-
-* Since ```Select``` returns an ```Observable```, ```user$``` will also be an ```Observable``` instead of a ```Subject```.
-* **@lithiumjs/angular v2.0.0 note:** Due to a limitation with bootstrapping, it is necessary to explictly use ```Alias``` on the property. See the [Lithium docs](https://github.com/lVlyke/lithium-angular#stateemitter) for more information.
+Note: Since ```Select``` returns an ```Observable```, ```user$``` will also be an ```Observable``` instead of a ```Subject```.
 
 ### Using Lithium's ```@StateEmitter()``` and ```@EventSource()``` decorators with class inheritance
 
 The [```EntryBasePage```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/base/entry/entry-base-page.ts) component is a base class that illustrates how both ```StateEmitter``` and ```EventSource``` can be declared in a parent class and can be used in the parent class as well as any child classes. This is useful for defining logic that is common to multiple components. This class is used by [```LoginComponent```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/login/login.component.ts) and [```RegisterComponent```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/register/register.component.ts).
+
+### Using advanced StateEmitter proxying with ```@StateEmitter.FromSelf()```
+
+In [```HelpDialogComponent```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/home/help-dialog/help-dialog.component.ts), a [self-proxied ```StateEmitter```](https://github.com/lVlyke/lithium-angular#proxied-stateemitters) with the proxy mode ```From``` is used to create a ```BehaviorSubject``` from an NGXS ```Select``` expression that returns an ```Observable```.
+
+```ts
+@StateEmitter.FromSelf()
+@Select(SessionState.hideBanner)
+public readonly hideBanner$: Subject<boolean>;
+```
+
+Normally ```@Select()``` creates a property of type ```Observable```, but using Lithium's proxying feature we can create a ```BehaviorSubject``` that takes the first value from the result of the ```Select``` expression. (We could also change the ```StateEmitter``` proxy mode to ```Merge``` to continue to receive emissions from the original ```Select``` expression!)
