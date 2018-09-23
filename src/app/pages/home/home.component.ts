@@ -8,7 +8,7 @@ import { SessionState } from '../../store/session/session.store';
 import { Observable, Subject, merge, fromEvent, BehaviorSubject } from 'rxjs';
 import { User } from '../../models/user';
 import { Store } from '@ngxs/store';
-import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay, shareReplay } from 'rxjs/operators';
+import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay, shareReplay, tap } from 'rxjs/operators';
 import { TodoList } from '../../models/todo-list';
 import { SessionUtils } from '../../utils/session-utils.service';
 import { Router } from '@angular/router';
@@ -120,6 +120,7 @@ export class HomeComponent {
 
         // Confirm with the user that they want to delete the list...
         return dialog.open(DeleteDialogComponent).afterClosed().pipe(
+          tap(() => deleteDialogOpened$.next(false)),
           filter(Boolean),
           mapTo(listName)
         );
@@ -136,8 +137,6 @@ export class HomeComponent {
     ).subscribe((listName) => {
       // Focus the first list
       this.activeListName$.next(listName);
-
-      deleteDialogOpened$.next(false);
     });
 
     // Wait for the new list field to be blurred...

@@ -29,7 +29,7 @@ export class UserUtils {
   }
 
   public loginAs(user: Partial<User>): Observable<Session> {
-    const foundUser = this.getUserById(user.id, user.secret);
+    const foundUser = this.getUserById(user.id);
 
     if (!foundUser) {
       return throwError(`User "${user.id}" not found.`);
