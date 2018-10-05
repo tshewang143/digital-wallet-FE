@@ -18,8 +18,6 @@ export class HelpDialogComponent {
   public readonly hideBanner$: Subject<boolean>;
 
   constructor(store: Store) {
-    this.hideBanner$.pipe(
-      mergeMap(hideBanner => store.dispatch(new HideBannerAction(hideBanner)))
-    ).subscribe();
+    this.hideBanner$.subscribe(hideBanner => store.dispatch(new HideBannerAction(hideBanner)));
   }
 }
