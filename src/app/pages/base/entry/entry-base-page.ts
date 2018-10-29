@@ -2,8 +2,9 @@ import { StateEmitter, EventSource } from '@lithiumjs/angular';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { filter, map } from 'rxjs/operators';
+import { AotAware } from '@lithiumjs/angular/aot';
 
-export abstract class EntryBasePage {
+export abstract class EntryBasePage extends AotAware {
 
     @EventSource()
     protected onSubmit$: Observable<void>;
@@ -21,6 +22,8 @@ export abstract class EntryBasePage {
     protected error$: Subject<string>;
 
     constructor(snackBar: MatSnackBar, ...fields: Observable<any>[]) {
+        super();
+
         this.error$.pipe(
             filter(Boolean)
         ).subscribe(error => {

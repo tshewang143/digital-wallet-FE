@@ -1,17 +1,18 @@
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, Output } from '@angular/core';
 import { StateEmitter, EventSource } from '@lithiumjs/angular';
 import { Subject, Observable } from 'rxjs';
 import { TodoList } from '../../models/todo-list';
 import { withLatestFrom, filter, bufferTime, map } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { MatCheckbox } from '@angular/material';
+import { AotAware } from '@lithiumjs/angular/aot';
 
 @Component({
   selector: 'app-todo-list-view',
   templateUrl: './todo-list-view.component.html',
   styleUrls: ['./todo-list-view.component.scss']
 })
-export class TodoListViewComponent {
+export class TodoListViewComponent extends AotAware {
 
   @EventSource()
   private readonly onCompleteItem$: Observable<[number, MatCheckbox]>;
@@ -29,6 +30,8 @@ export class TodoListViewComponent {
   public readonly name$: Subject<string>;
 
   constructor() {
+    super();
+
     // Wait for items to be checked...
     this.onCompleteItem$.pipe(
       bufferTime(900),

@@ -14,13 +14,14 @@ import { SessionUtils } from '../../utils/session-utils.service';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { MatSidenavContainer, MatDialog } from '@angular/material';
+import { AotAware } from '@lithiumjs/angular/aot';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {
+export class HomeComponent extends AotAware {
 
   @AfterViewInit()
   private readonly afterViewInit$: Observable<void>;
@@ -79,6 +80,8 @@ export class HomeComponent {
     router: Router,
     dialog: MatDialog
   ) {
+    super();
+
     const deleteDialogOpened$ = new BehaviorSubject<boolean>(false);
     const helpDialogOpened$ = new BehaviorSubject<boolean>(false);
 
