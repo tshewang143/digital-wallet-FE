@@ -77,9 +77,15 @@ mat-toolbar {
         flex-direction: row;
         justify-content: center;
         padding-top: 0.5rem;
+
+        ::ng-deep .mat-list-item-content {
+            width: 70%;
+        }
     }
 
     #add-list-button {
+        width: 100%;
+        height: 2.5rem;
         border-radius: 100px;
     }
 }

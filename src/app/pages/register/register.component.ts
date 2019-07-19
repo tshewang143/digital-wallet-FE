@@ -7,7 +7,7 @@ import { User } from '../../models/user';
 import { Router } from '@angular/router';
 import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-register',

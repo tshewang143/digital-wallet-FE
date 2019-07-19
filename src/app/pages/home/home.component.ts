@@ -1,11 +1,11 @@
 import { HelpDialogComponent } from './help-dialog/help-dialog.component';
 import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
 import { UpdateUserAction } from './../../store/session/session.actions';
-import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { StateEmitter, EventSource, AfterViewInit } from '@lithiumjs/angular';
 import { Select } from '@ngxs/store';
 import { SessionState } from '../../store/session/session.store';
-import { Observable, Subject, merge, fromEvent, BehaviorSubject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { User } from '../../models/user';
 import { Store } from '@ngxs/store';
 import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay, shareReplay, tap } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { TodoList } from '../../models/todo-list';
 import { SessionUtils } from '../../utils/session-utils.service';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
-import { MatSidenavContainer, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { AotAware } from '@lithiumjs/angular/aot';
 
 @Component({
@@ -68,9 +68,6 @@ export class HomeComponent extends AotAware {
 
   @ViewChild('newListNameInput', { static: false })
   private readonly newListNameInput: ElementRef;
-
-  @ViewChild('container', { static: false })
-  private readonly container: MatSidenavContainer;
 
   private readonly firstTodoListName$: Observable<string>;
 
@@ -195,15 +192,11 @@ export class HomeComponent extends AotAware {
       delay(100)
     ).subscribe(() => this.newListNameInput.nativeElement.focus()); // Focus the input box
 
-    // Workaround for broken MatSidenavContainer resizing in @angular/material
-    // Adapted from: https://github.com/angular/material2/issues/6743#issuecomment-328453963
+    // Show the side menu after the page loads
     this.afterViewInit$.pipe(
-      delay(850),
-      map(() => this.showMenu$.next(true)),
-      mergeMap(() => merge((<any>this.container)._ngZone.onMicrotaskEmpty, fromEvent(window, 'resize'))),
+      delay(850)
     ).subscribe(() => {
-      (<any>this.container)._updateContentMargins();
-      (<any>this.container)._changeDetectorRef.markForCheck();
+      this.showMenu$.next(true);
     });
   }
 }

@@ -4,7 +4,7 @@ import { Subject, Observable } from 'rxjs';
 import { TodoList } from '../../models/todo-list';
 import { withLatestFrom, filter, bufferTime, map } from 'rxjs/operators';
 import * as _ from 'lodash';
-import { MatCheckbox } from '@angular/material';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { AotAware } from '@lithiumjs/angular/aot';
 
 @Component({
