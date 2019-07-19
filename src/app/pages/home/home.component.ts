@@ -66,10 +66,10 @@ export class HomeComponent extends AotAware {
   @StateEmitter()
   private readonly showMenu$: Subject<boolean>;
 
-  @ViewChild('newListNameInput')
+  @ViewChild('newListNameInput', { static: false })
   private readonly newListNameInput: ElementRef;
 
-  @ViewChild('container')
+  @ViewChild('container', { static: false })
   private readonly container: MatSidenavContainer;
 
   private readonly firstTodoListName$: Observable<string>;
