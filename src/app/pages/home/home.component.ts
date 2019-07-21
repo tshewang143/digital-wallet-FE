@@ -1,8 +1,8 @@
 import { HelpDialogComponent } from './help-dialog/help-dialog.component';
 import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
 import { UpdateUserAction } from './../../store/session/session.actions';
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { StateEmitter, EventSource, AfterViewInit } from '@lithiumjs/angular';
+import { Component, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { StateEmitter, EventSource, AfterViewInit, AotAware, AutoPush } from '@lithiumjs/angular';
 import { Select } from '@ngxs/store';
 import { SessionState } from '../../store/session/session.store';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
@@ -14,13 +14,14 @@ import { SessionUtils } from '../../utils/session-utils.service';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material/dialog';
-import { AotAware } from '@lithiumjs/angular/aot';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
+@AutoPush()
 export class HomeComponent extends AotAware {
 
   @AfterViewInit()
@@ -75,7 +76,8 @@ export class HomeComponent extends AotAware {
     store: Store,
     sessionUtils: SessionUtils,
     router: Router,
-    dialog: MatDialog
+    dialog: MatDialog,
+    _cdRef: ChangeDetectorRef
   ) {
     super();
 

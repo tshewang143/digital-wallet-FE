@@ -1,8 +1,7 @@
-import { StateEmitter, EventSource } from '@lithiumjs/angular';
+import { StateEmitter, EventSource, AotAware } from '@lithiumjs/angular';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { filter, map } from 'rxjs/operators';
-import { AotAware } from '@lithiumjs/angular/aot';
 
 export abstract class EntryBasePage extends AotAware {
 

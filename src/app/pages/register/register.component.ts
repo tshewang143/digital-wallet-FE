@@ -1,9 +1,7 @@
-import { Component } from '@angular/core';
-import { StateEmitter, EventSource } from '@lithiumjs/angular';
-import { Subject, combineLatest, Observable, empty, BehaviorSubject } from 'rxjs';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { StateEmitter, AutoPush } from '@lithiumjs/angular';
+import { Subject, combineLatest, empty, BehaviorSubject } from 'rxjs';
 import { map, mergeMap, catchError, take } from 'rxjs/operators';
-import { LocalStorage } from 'ngx-store';
-import { User } from '../../models/user';
 import { Router } from '@angular/router';
 import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
@@ -12,14 +10,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  styleUrls: ['./register.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
+@AutoPush()
 export class RegisterComponent extends EntryBasePage {
 
   @StateEmitter()
   private name$: Subject<string>;
 
-  constructor(router: Router, userUtils: UserUtils, snackBar: MatSnackBar) {
+  constructor(router: Router, userUtils: UserUtils, snackBar: MatSnackBar, _cdRef: ChangeDetectorRef) {
     // Create a proxy subejct that can be passed to super()
     const nameField$ = new BehaviorSubject<string>(undefined);
 

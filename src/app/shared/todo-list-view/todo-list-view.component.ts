@@ -1,17 +1,19 @@
-import { Component, Input, Output } from '@angular/core';
-import { StateEmitter, EventSource } from '@lithiumjs/angular';
+import { Component, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { StateEmitter, EventSource, AutoPush } from '@lithiumjs/angular';
 import { Subject, Observable } from 'rxjs';
 import { TodoList } from '../../models/todo-list';
-import { withLatestFrom, filter, bufferTime, map } from 'rxjs/operators';
+import { withLatestFrom, filter, bufferTime } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { AotAware } from '@lithiumjs/angular/aot';
+import { AotAware } from '@lithiumjs/angular';
 
 @Component({
   selector: 'app-todo-list-view',
   templateUrl: './todo-list-view.component.html',
-  styleUrls: ['./todo-list-view.component.scss']
+  styleUrls: ['./todo-list-view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
+@AutoPush()
 export class TodoListViewComponent extends AotAware {
 
   @EventSource()
@@ -29,12 +31,13 @@ export class TodoListViewComponent extends AotAware {
   @Input('name')
   public readonly name$: Subject<string>;
 
-  constructor() {
+  constructor(_cdRef: ChangeDetectorRef) {
     super();
 
     // Wait for items to be checked...
     this.onCompleteItem$.pipe(
       bufferTime(900),
+      filter(items => items.length > 0),
       withLatestFrom(this.list$)
     ).subscribe(([collectedItems, list]: [[number, MatCheckbox][], TodoList]) => {
       collectedItems.forEach(([index, checkbox]) => {

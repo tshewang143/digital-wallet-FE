@@ -68,11 +68,12 @@ export class UserUtils {
       return throwError(`User "${id}" already exists.`);
     }
 
-    const user = {
+    const user: User = {
       name: name,
       id: id,
       secret: this.encodeSecret(password),
       color: `rgb(${_.random(20, 127)},${_.random(20, 127)},${_.random(20, 127)})`,
+      hideBanner: false,
       todoLists: {}
     };
 
