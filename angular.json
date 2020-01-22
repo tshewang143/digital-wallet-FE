@@ -33,6 +33,8 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/lithium-angular-example-app",
+              "deployUrl": "lithium-angular-example-app/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
