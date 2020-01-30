@@ -24,7 +24,7 @@ export abstract class EntryBasePage extends AotAware {
         super();
 
         this.error$.pipe(
-            filter(Boolean)
+            filter<string>(Boolean)
         ).subscribe(error => {
             console.error(error);
             snackBar.open(error, 'Dismiss', { verticalPosition: 'top' });

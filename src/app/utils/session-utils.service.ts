@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LocalStorage } from 'ngx-store';
 import { Session } from '../models/session';
 import { Store, Select } from '@ngxs/store';
-import { Observable, throwError, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { SetAction, InvalidateAction } from '../store/session/session.actions';
 import * as moment from 'moment';
 import { User } from '../models/user';
@@ -19,12 +19,12 @@ export class SessionUtils {
   private users: User[] = [];
 
   @Select()
-  private session$: Observable<Session>;
+  public session$: Observable<Session>;
 
   constructor(private store: Store) {
     // Wait for the session to change...
     this.session$.pipe(
-      filter(Boolean)
+      filter<Session>(Boolean)
     ).subscribe(session => {
       // Update the local store
       this._session = session;

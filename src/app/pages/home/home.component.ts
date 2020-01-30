@@ -47,10 +47,10 @@ export class HomeComponent extends AotAware {
 
   @StateEmitter()
   @Select(SessionState.getUser)
-  private readonly user$: Observable<User>;
+  public readonly user$: Observable<User>;
 
   @Select(SessionState.getTodoLists)
-  private readonly todoLists$: Observable<User.TodoListDictionary>;
+  public readonly todoLists$: Observable<User.TodoListDictionary>;
 
   @StateEmitter({ initialValue: [] })
   private readonly todoListNames$: Subject<string[]>;
@@ -67,7 +67,7 @@ export class HomeComponent extends AotAware {
   @StateEmitter()
   private readonly showMenu$: Subject<boolean>;
 
-  @ViewChild('newListNameInput', { static: false })
+  @ViewChild('newListNameInput')
   private readonly newListNameInput: ElementRef;
 
   private readonly firstTodoListName$: Observable<string>;
@@ -99,7 +99,7 @@ export class HomeComponent extends AotAware {
     // Highlight the first todo list initially
     this.user$.pipe(
       mergeMapTo(this.firstTodoListName$),
-      filter(Boolean),
+      filter<string>(Boolean),
       take(1),
     ).subscribe(listName => this.activeListName$.next(listName));
 
