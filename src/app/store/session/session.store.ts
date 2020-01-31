@@ -2,7 +2,9 @@ import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Session } from '../../models/session';
 import { SetAction, InvalidateAction, UpdateUserAction, HideBannerAction } from './session.actions';
 import { User } from '../../models/user';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 @State<Session>({
     name: 'session',
     defaults: null
