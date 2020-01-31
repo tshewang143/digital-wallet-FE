@@ -1,7 +1,6 @@
 import { RegisterComponent } from './pages/register/register.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { WebStorageModule } from 'ngx-store';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -64,7 +63,6 @@ import { HelpDialogComponent } from './pages/home/help-dialog/help-dialog.compon
     NgxsModule.forRoot([
       SessionState
     ]),
-    WebStorageModule,
 
     RoutesModule
   ],
