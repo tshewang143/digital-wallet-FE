@@ -1,8 +1,8 @@
 import { HelpDialogComponent } from './help-dialog/help-dialog.component';
 import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
 import { UpdateUserAction } from './../../store/session/session.actions';
-import { Component, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { StateEmitter, EventSource, AfterViewInit, AotAware, AutoPush } from '@lithiumjs/angular';
+import { Component, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
+import { StateEmitter, EventSource, AfterViewInit } from '@lithiumjs/angular';
 import { Select } from '@ngxs/store';
 import { SessionState } from '../../store/session/session.store';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
@@ -14,6 +14,7 @@ import { SessionUtils } from '../../utils/session-utils.service';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material/dialog';
+import { BaseComponent } from 'src/app/core/base-component';
 
 @Component({
   selector: 'app-home',
@@ -21,8 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-@AutoPush()
-export class HomeComponent extends AotAware {
+export class HomeComponent extends BaseComponent {
 
   @AfterViewInit()
   private readonly afterViewInit$: Observable<void>;
@@ -67,19 +67,21 @@ export class HomeComponent extends AotAware {
   @StateEmitter()
   private readonly showMenu$: Subject<boolean>;
 
+  @StateEmitter()
   @ViewChild('newListNameInput')
-  private readonly newListNameInput: ElementRef;
+  private readonly newListNameInput$: Subject<ElementRef<HTMLElement>>;
 
   private readonly firstTodoListName$: Observable<string>;
 
   constructor(
+    injector: Injector,
+    cdRef: ChangeDetectorRef, 
     store: Store,
     sessionUtils: SessionUtils,
     router: Router,
-    dialog: MatDialog,
-    _cdRef: ChangeDetectorRef
+    dialog: MatDialog
   ) {
-    super();
+    super(injector, cdRef);
 
     const deleteDialogOpened$ = new BehaviorSubject<boolean>(false);
     const helpDialogOpened$ = new BehaviorSubject<boolean>(false);
@@ -191,8 +193,9 @@ export class HomeComponent extends AotAware {
     // Wait for showNewListNameInput to become true...
     this.showNewListNameInput$.pipe(
       filter(Boolean),
-      delay(100)
-    ).subscribe(() => this.newListNameInput.nativeElement.focus()); // Focus the input box
+      delay(100),
+      withLatestFrom(this.newListNameInput$)
+    ).subscribe(([, newListNameInput]) => newListNameInput.nativeElement.focus()); // Focus the input box
 
     // Show the side menu after the page loads
     this.afterViewInit$.pipe(

@@ -1,9 +1,11 @@
-import { StateEmitter, EventSource, AotAware } from '@lithiumjs/angular';
+import { StateEmitter, EventSource } from '@lithiumjs/angular';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { filter, map } from 'rxjs/operators';
+import { BaseComponent } from 'src/app/core/base-component';
+import { ChangeDetectorRef, Injector } from '@angular/core';
 
-export abstract class EntryBasePage extends AotAware {
+export abstract class EntryBasePage extends BaseComponent {
 
     @EventSource()
     protected onSubmit$: Observable<void>;
@@ -20,8 +22,8 @@ export abstract class EntryBasePage extends AotAware {
     @StateEmitter()
     protected error$: Subject<string>;
 
-    constructor(snackBar: MatSnackBar, ...fields: Observable<any>[]) {
-        super();
+    constructor(injector: Injector, cdRef: ChangeDetectorRef, snackBar: MatSnackBar, ...fields: Observable<any>[]) {
+        super(injector, cdRef);
 
         this.error$.pipe(
             filter<string>(Boolean)

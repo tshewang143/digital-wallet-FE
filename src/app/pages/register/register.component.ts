@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { StateEmitter, AutoPush } from '@lithiumjs/angular';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
+import { StateEmitter } from '@lithiumjs/angular';
 import { Subject, combineLatest, empty, BehaviorSubject } from 'rxjs';
 import { map, mergeMap, catchError, take } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -13,17 +13,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./register.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-@AutoPush()
 export class RegisterComponent extends EntryBasePage {
 
   @StateEmitter()
   private name$: Subject<string>;
 
-  constructor(router: Router, userUtils: UserUtils, snackBar: MatSnackBar, _cdRef: ChangeDetectorRef) {
+  constructor(injector: Injector, cdRef: ChangeDetectorRef, router: Router, userUtils: UserUtils, snackBar: MatSnackBar) {
     // Create a proxy subejct that can be passed to super()
     const nameField$ = new BehaviorSubject<string>(undefined);
 
-    super(snackBar, nameField$);
+    super(injector, cdRef, snackBar, nameField$);
 
     this.name$.subscribe(nameField$);
 

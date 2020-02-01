@@ -1,11 +1,11 @@
-import { Component, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { StateEmitter, EventSource, AutoPush } from '@lithiumjs/angular';
+import { Component, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
+import { StateEmitter, EventSource } from '@lithiumjs/angular';
 import { Subject, Observable } from 'rxjs';
 import { TodoList } from '../../models/todo-list';
 import { withLatestFrom, filter, bufferTime } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { AotAware } from '@lithiumjs/angular';
+import { BaseComponent } from 'src/app/core/base-component';
 
 @Component({
   selector: 'app-todo-list-view',
@@ -13,8 +13,7 @@ import { AotAware } from '@lithiumjs/angular';
   styleUrls: ['./todo-list-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-@AutoPush()
-export class TodoListViewComponent extends AotAware {
+export class TodoListViewComponent extends BaseComponent {
 
   @EventSource()
   private readonly onCompleteItem$: Observable<[number, MatCheckbox]>;
@@ -31,8 +30,8 @@ export class TodoListViewComponent extends AotAware {
   @Input('name')
   public readonly name$: Subject<string>;
 
-  constructor(_cdRef: ChangeDetectorRef) {
-    super();
+  constructor(injector: Injector, cdRef: ChangeDetectorRef) {
+    super(injector, cdRef);
 
     // Wait for items to be checked...
     this.onCompleteItem$.pipe(
