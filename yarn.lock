@@ -901,10 +901,10 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.2.tgz#26520bf09abe4a5644cd5414e37125a8954241dd"
   integrity sha512-tsAQNx32a8CoFhjhijUIhI4kccIAgmGhy8LZMZgGfmXcpMbPRUqn5LWmgRttILi6yeGmBJd2xsPkFMs0PzgPCw==
 
-"@lithiumjs/angular@4.0.0-beta.1":
-  version "4.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@lithiumjs/angular/-/angular-4.0.0-beta.1.tgz#616eb281d7939648b0b9291df89baa1a5b7aa305"
-  integrity sha512-XAZMDoeXEOupsAKnHf2Ed+DToh0nYr0/Nnp0gF9F9/OE9w27AHhqJUGFf6N9FvXeCPWhU2VVKK6hgiaFdzgUVQ==
+"@lithiumjs/angular@4.0.0-beta.2":
+  version "4.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@lithiumjs/angular/-/angular-4.0.0-beta.2.tgz#e77da9bdbe5fbe58185ae16151ef05a62505bcb5"
+  integrity sha512-WF3+Firypc2vUk0QTlbobo3ZUjs85f0PLsTS/q3QQmO0xRZg49BATklQC37eu1fdLsgxWsctcLTcJ/gNXY3olg==
 
 "@ngtools/webpack@9.0.0-rc.12":
   version "9.0.0-rc.12"
