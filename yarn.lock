@@ -308,10 +308,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@lithiumjs/angular@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@lithiumjs/angular/-/angular-3.1.0.tgz#4fc96b8b5797c21d25af191ccea56da1e805af31"
-  integrity sha512-7pdvEpA2XApT6YnBt6Q+QN31WxlTD7kmpFnuPdVnjiSemoBDpb/Up+cBTM6bzeUrOsUVHsjU7K6KN7dfyhJiLQ==
+"@lithiumjs/angular@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@lithiumjs/angular/-/angular-3.1.1.tgz#8d546fb282392755b816a77212c2e6f40e2f6016"
+  integrity sha512-Pm4Na2J7i6QEo8cez4azqottaXeNO6uvMQs8c4cKzzHwnQizMmeDkVXssLHcFpaQcNuC12J0tubvCoHKiWOcRA==
   dependencies:
     tslib "^1.9.0"
 
