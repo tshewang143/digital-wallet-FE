@@ -4,13 +4,13 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { Session } from '../models/session';
 import * as moment from 'moment';
-import { map, filter } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
 
   @Select()
-  private session$: Observable<Session>;
+  public session$: Observable<Session>;
 
   constructor(private router: Router) {}
 

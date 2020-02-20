@@ -1,7 +1,6 @@
 import { RegisterComponent } from './pages/register/register.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { WebStorageModule } from 'ngx-store';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -29,6 +28,8 @@ import { AuthGuard } from './guards/auth-guard.service';
 import { TodoListViewComponent } from './shared/todo-list-view/todo-list-view.component';
 import { DeleteDialogComponent } from './pages/home/delete-dialog/delete-dialog.component';
 import { HelpDialogComponent } from './pages/home/help-dialog/help-dialog.component';
+import { AppBannerComponent } from './shared/app-banner/app-banner.component';
+import { MatRippleModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { HelpDialogComponent } from './pages/home/help-dialog/help-dialog.compon
     HomeComponent,
     TodoListViewComponent,
     DeleteDialogComponent,
-    HelpDialogComponent
+    HelpDialogComponent,
+    AppBannerComponent
   ],
   entryComponents: [
     DeleteDialogComponent,
@@ -60,11 +62,11 @@ import { HelpDialogComponent } from './pages/home/help-dialog/help-dialog.compon
     MatExpansionModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatRippleModule,
 
     NgxsModule.forRoot([
       SessionState
     ]),
-    WebStorageModule,
 
     RoutesModule
   ],

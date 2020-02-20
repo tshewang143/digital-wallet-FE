@@ -1,6 +1,5 @@
 import { Observable, of, throwError } from 'rxjs';
 import { User } from '../models/user';
-import { LocalStorage } from 'ngx-store';
 import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
@@ -9,9 +8,6 @@ import { Session } from '../models/session';
 
 @Injectable()
 export class UserUtils {
-
-  @LocalStorage()
-  private users: User[] = [];
 
   constructor(private sessionUtils: SessionUtils) { }
 
@@ -78,7 +74,7 @@ export class UserUtils {
     };
 
     // add the user
-    this.users.push(user);
+    this.usersStore = this.usersStore.concat([user]);
 
     return of(user);
   }
@@ -88,6 +84,14 @@ export class UserUtils {
   }
 
   public getUserById(id: string, secret?: string): User {
-    return _.find(this.users, secret ? { id, secret } : { id });
+    return _.find(this.usersStore, secret ? { id, secret } : { id });
+  }
+
+  private get usersStore(): User[] {
+    return localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : [];
+  }
+
+  private set usersStore(users: User[] | undefined) {
+    localStorage.setItem('users', JSON.stringify(users || []));
   }
 }
