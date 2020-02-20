@@ -52,7 +52,7 @@ export class HomeComponent extends BaseComponent {
   @Select(SessionState.getTodoLists)
   public readonly todoLists$: Observable<User.TodoListDictionary>;
 
-  @StateEmitter({ initialValue: [] })
+  @StateEmitter({ initial: () => [] })
   private readonly todoListNames$: Subject<string[]>;
 
   @StateEmitter()
