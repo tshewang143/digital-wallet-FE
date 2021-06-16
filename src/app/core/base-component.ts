@@ -1,7 +1,7 @@
-import { AotAware, AutoPush } from '@lithiumjs/angular';
+import { LiComponent, AutoPush } from '@lithiumjs/angular';
 import { Injector, ChangeDetectorRef } from '@angular/core';
 
-export class BaseComponent extends AotAware {
+export class BaseComponent extends LiComponent {
 
     constructor(
         protected readonly injector: Injector,
