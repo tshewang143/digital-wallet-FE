@@ -7,7 +7,7 @@
     <mat-list-item *ngFor="let todoItem of list.todo; let i = index">
       <mat-checkbox #checkbox
                     color="primary"
-                    (click)="checkbox.checked ? $event.preventDefault() : onCompleteItem([i, checkbox])">
+                    (click)="checkbox.checked ? $event.preventDefault() : onCompleteItem$.next([i, checkbox])">
         {{todoItem}}
       </mat-checkbox>
     </mat-list-item>
@@ -18,7 +18,7 @@
            matInput
            id="add-task-input"
            placeholder="Add new task..."
-           (keydown.enter)="onAddTask(addTaskInput.value); addTaskInput.value = ''">
+           (keydown.enter)="onAddTask$.next(addTaskInput.value); addTaskInput.value = ''">
   </mat-form-field>
 
   <mat-accordion id="completed-items-accordion" 
@@ -30,7 +30,7 @@
       </mat-expansion-panel-header>
       <mat-list>
         <mat-list-item *ngFor="let completedItem of list.completed">
-            <mat-checkbox color="primary" checked="true" disabled="true">{{completedItem}}</mat-checkbox>
+            <mat-checkbox color="primary" [checked]="true" [disabled]="true">{{completedItem}}</mat-checkbox>
         </mat-list-item>
       </mat-list>
     </mat-expansion-panel>

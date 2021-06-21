@@ -1,31 +1,29 @@
-import { StateEmitter, EventSource } from '@lithiumjs/angular';
-import { Observable, Subject, combineLatest } from 'rxjs';
+import { ComponentStateRef } from '@lithiumjs/angular';
+import { Observable, combineLatest, Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { filter, map } from 'rxjs/operators';
 import { BaseComponent } from 'src/app/core/base-component';
-import { ChangeDetectorRef, Injector } from '@angular/core';
+import { ChangeDetectorRef, Directive, Injector } from '@angular/core';
 
+@Directive()
 export abstract class EntryBasePage extends BaseComponent {
 
-    @EventSource()
-    protected onSubmit$: Observable<void>;
+    public readonly onSubmit$ = new Subject<void>();
+    public formSubmissionEnabled = true;
+    public username?: string = undefined;
+    public password?: string = undefined;
+    public error?: string = undefined;
 
-    @StateEmitter()
-    protected username$: Subject<string>;
-
-    @StateEmitter()
-    protected password$: Subject<string>;
-
-    @StateEmitter({ readOnly: true })
-    protected formSubmissionEnabled$: Subject<boolean>;
-
-    @StateEmitter()
-    protected error$: Subject<string>;
-
-    constructor(injector: Injector, cdRef: ChangeDetectorRef, snackBar: MatSnackBar, ...fields: Observable<any>[]) {
+    constructor(
+        injector: Injector,
+        cdRef: ChangeDetectorRef,
+        stateRef: ComponentStateRef<EntryBasePage>,
+        snackBar: MatSnackBar,
+        ...fields: Observable<any>[]
+    ) {
         super(injector, cdRef);
 
-        this.error$.pipe(
+        stateRef.get("error").pipe(
             filter<string>(Boolean)
         ).subscribe(error => {
             console.error(error);
@@ -33,8 +31,8 @@ export abstract class EntryBasePage extends BaseComponent {
         });
 
         // Only enable the submit button if the user entered all fields
-        combineLatest(this.username$, this.password$, ...fields).pipe(
+        combineLatest([stateRef.get("username"), stateRef.get("password"), ...fields]).pipe(
             map(_fields => _fields.every(Boolean))
-        ).subscribe(this.formSubmissionEnabled$);
+        ).subscribe(formSubmissionEnabled => this.formSubmissionEnabled = formSubmissionEnabled);
     }
 }

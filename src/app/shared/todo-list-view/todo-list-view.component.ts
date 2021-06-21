@@ -1,8 +1,8 @@
-import { Component, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
-import { StateEmitter, EventSource } from '@lithiumjs/angular';
-import { Subject, Observable } from 'rxjs';
+import { Component, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef, Injector, EventEmitter } from '@angular/core';
+import { ComponentStateRef, ComponentState } from '@lithiumjs/angular';
+import { Observable, Subject } from 'rxjs';
 import { TodoList } from '../../models/todo-list';
-import { withLatestFrom, filter, bufferTime } from 'rxjs/operators';
+import { filter, bufferTime, skip } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { BaseComponent } from 'src/app/core/base-component';
@@ -11,56 +11,55 @@ import { BaseComponent } from 'src/app/core/base-component';
   selector: 'app-todo-list-view',
   templateUrl: './todo-list-view.component.html',
   styleUrls: ['./todo-list-view.component.scss'],
+  providers: [ComponentState.create(TodoListViewComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TodoListViewComponent extends BaseComponent {
 
-  @EventSource()
-  private readonly onCompleteItem$: Observable<[number, MatCheckbox]>;
+  public readonly onCompleteItem$ = new Subject<[number, MatCheckbox]>();
+  public readonly onAddTask$ = new Subject<string>();
+  
+  @Input()
+  public list: TodoList = undefined;
 
-  @EventSource()
-  private readonly onAddTask$: Observable<string>;
+  @Input()
+  public name: string = '';
 
   @Output('listChanged')
-  @StateEmitter()
-  @Input('list')
-  private readonly list$: Subject<TodoList>;
+  public readonly listChanged$ = new EventEmitter<TodoList>();
 
-  @StateEmitter()
-  @Input('name')
-  public readonly name$: Subject<string>;
-
-  constructor(injector: Injector, cdRef: ChangeDetectorRef) {
+  constructor(
+    injector: Injector,
+    cdRef: ChangeDetectorRef,
+    stateRef: ComponentStateRef<TodoListViewComponent>,
+  ) {
     super(injector, cdRef);
+
+    stateRef.get('list').pipe(skip(1)).subscribe(this.listChanged$);
 
     // Wait for items to be checked...
     this.onCompleteItem$.pipe(
       bufferTime(900),
-      filter(items => items.length > 0),
-      withLatestFrom(this.list$)
-    ).subscribe(([collectedItems, list]: [[number, MatCheckbox][], TodoList]) => {
+      filter(items => items.length > 0)
+    ).subscribe((collectedItems: [number, MatCheckbox][]) => {
       collectedItems.forEach(([index, checkbox]) => {
         // Move the item from the todo list to the completed list
-        const item = list.todo[index];
-        delete list.todo[index];
-        list.completed.push(item);
+        const item = this.list.todo[index];
+        delete this.list.todo[index];
+        this.list.completed.push(item);
         checkbox.checked = false;
       });
 
       // Filter out the deleted items
-      list.todo = list.todo.filter(Boolean);
-
-      this.list$.next(list);
+      this.list.todo = this.list.todo.filter(Boolean);
     });
 
     // Wait for a task to be added...
     this.onAddTask$.pipe(
-      filter(item => item.length > 0),
-      withLatestFrom(this.list$)
-    ).subscribe(([item, list]: [string, TodoList]) => {
+      filter(item => item.length > 0)
+    ).subscribe((item) => {
       // Add the item to the list
-      list.todo.push(item);
-      this.list$.next(list);
+      this.list.todo.push(item);
     });
   }
 }

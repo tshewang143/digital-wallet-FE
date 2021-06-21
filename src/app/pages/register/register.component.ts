@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
-import { StateEmitter } from '@lithiumjs/angular';
-import { Subject, combineLatest, empty, BehaviorSubject } from 'rxjs';
-import { map, mergeMap, catchError, take } from 'rxjs/operators';
+import { ComponentState, ComponentStateRef } from '@lithiumjs/angular';
+import { EMPTY } from 'rxjs';
+import { map, mergeMap, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
@@ -11,28 +11,29 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
+  providers: [ComponentState.create(RegisterComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent extends EntryBasePage {
 
-  @StateEmitter()
-  private name$: Subject<string>;
+  public name?: string = undefined;
 
-  constructor(injector: Injector, cdRef: ChangeDetectorRef, router: Router, userUtils: UserUtils, snackBar: MatSnackBar) {
-    // Create a proxy subejct that can be passed to super()
-    const nameField$ = new BehaviorSubject<string>(undefined);
-
-    super(injector, cdRef, snackBar, nameField$);
-
-    this.name$.subscribe(nameField$);
+  constructor(
+    injector: Injector,
+    cdRef: ChangeDetectorRef,
+    stateRef: ComponentStateRef<RegisterComponent>,
+    router: Router,
+    userUtils: UserUtils, 
+    snackBar: MatSnackBar
+  ) {
+    super(injector, cdRef, stateRef, snackBar, stateRef.get('name'));
 
     this.onSubmit$.pipe(
-      mergeMap(() => combineLatest(this.name$, this.username$, this.password$).pipe(take(1))),
-      mergeMap(([name, username, password]: [string, string, string]) => {
-        return userUtils.register(name, username, password).pipe(
+      mergeMap(() => {
+        return userUtils.register(this.name, this.username, this.password).pipe(
           catchError((error) => {
-            this.error$.next(error);
-            return empty();
+            this.error = error;
+            return EMPTY;
           })
         );
       }),
@@ -40,8 +41,8 @@ export class RegisterComponent extends EntryBasePage {
         // Log the user in
         return userUtils.loginAs(user).pipe(
           catchError((error) => {
-            this.error$.next(error);
-            return empty();
+            this.error = error;
+            return EMPTY;
           })
         );
       }),

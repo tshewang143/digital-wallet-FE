@@ -1,4 +1,4 @@
-<app-banner *ngIf="!hideBanner">
+<app-banner *ngIf="!(hideBanner$ | async)">
 </app-banner>
 
 <router-outlet></router-outlet>
