@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef, ChangeDetectionStrategy, Injector } from '@angular/core';
-import { combineLatest, EMPTY } from 'rxjs';
-import { mergeMap, catchError, take } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
+import { mergeMap, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
@@ -27,9 +27,8 @@ export class LoginComponent extends EntryBasePage {
     super(injector, cdRef, stateRef, snackBar);
 
     this.onSubmit$.pipe(
-      mergeMap(() => combineLatest(stateRef.getAll("username", "password")).pipe(take(1))),
-      mergeMap(([username, password]) => {
-        return userUtils.login(username, password).pipe(
+      mergeMap(() => {
+        return userUtils.login(this.username, this.password).pipe(
           catchError((error) => {
             this.error = error;
             return EMPTY;

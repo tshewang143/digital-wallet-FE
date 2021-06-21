@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
-import { ComponentState, ComponentStateRef } from '@lithiumjs/angular';
+import { AsyncState, ComponentState, ComponentStateRef } from '@lithiumjs/angular';
 import { Select, Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { SessionState } from '../../../store/session/session.store';
@@ -18,7 +18,8 @@ export class HelpDialogComponent extends BaseComponent {
   @Select(SessionState.hideBanner)
   public readonly hideBanner$: Subject<boolean>;
 
-  public hideBanner: boolean = false;
+  @AsyncState()
+  public hideBanner!: boolean;
 
   constructor(injector: Injector, cdRef: ChangeDetectorRef, stateRef: ComponentStateRef<HelpDialogComponent>, store: Store) {
     super(injector, cdRef);

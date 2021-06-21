@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { Select } from '@ngxs/store';
 import { SessionState } from './store/session/session.store';
 import { Observable } from 'rxjs';
-import { User } from './models/user';
 import { BaseComponent } from './core/base-component';
 
 @Component({
@@ -14,9 +13,6 @@ import { BaseComponent } from './core/base-component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent extends BaseComponent {
-
-  @Select(SessionState.getUser)
-  public readonly user$: Observable<User>;
 
   @Select(SessionState.hideBanner)
   public readonly hideBanner$: Observable<boolean>;
