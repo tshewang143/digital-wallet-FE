@@ -1533,10 +1533,10 @@
     merge-source-map "^1.1.0"
     schema-utils "^2.7.0"
 
-"@lithiumjs/angular@7.0.0-alpha.1":
-  version "7.0.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/@lithiumjs/angular/-/angular-7.0.0-alpha.1.tgz#37e0b4fac6551ec1af9927f12b49ed3c1f600ccd"
-  integrity sha512-OmMPAeEYdU6NSMEHSsff2GGZ+bMBVSpwJEbpiGzok3cE/TXMANDhJv0tXtsoUqE0FAtF/xjlEDTdHg2T4x3/lQ==
+"@lithiumjs/angular@7.0.0-alpha.2":
+  version "7.0.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@lithiumjs/angular/-/angular-7.0.0-alpha.2.tgz#5cf5d7fb8c2ee566684fd54df20ba4ad6e666d29"
+  integrity sha512-XmQWF4xLmSr8XjrP4GfyPIy+wz8maBlBCxcO8iyNFAiWX8DfT7eyt40uti22LubE9REETIWPSJw16d6UMRDIwg==
   dependencies:
     tslib "^2.1.0"
 
