@@ -1,4 +1,4 @@
-import { ComponentStateRef } from '@lithiumjs/angular';
+import { ComponentStateRef, DeclareState } from '@lithiumjs/angular';
 import { Observable, combineLatest, Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { filter, map } from 'rxjs/operators';
@@ -10,18 +10,20 @@ export abstract class EntryBasePage extends BaseComponent {
 
     public readonly onSubmit$ = new Subject<void>();
     public formSubmissionEnabled = true;
-    public username?: string = undefined;
-    public password?: string = undefined;
-    public error?: string = undefined;
+    public username = '';
+    public password = '';
+    @DeclareState()
+    public error?: string;
 
     constructor(
         injector: Injector,
         cdRef: ChangeDetectorRef,
-        stateRef: ComponentStateRef<EntryBasePage>,
         snackBar: MatSnackBar,
         ...fields: Observable<any>[]
     ) {
         super(injector, cdRef);
+
+        const stateRef = injector.get<ComponentStateRef<EntryBasePage>>(ComponentStateRef);
 
         stateRef.get("error").pipe(
             filter<string>(Boolean)

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ComponentState, ComponentStateRef } from '@lithiumjs/angular';
+import { ComponentState } from '@lithiumjs/angular';
 
 @Component({
   selector: 'app-login',
@@ -21,10 +21,9 @@ export class LoginComponent extends EntryBasePage {
     cdRef: ChangeDetectorRef,
     router: Router,
     userUtils: UserUtils,
-    snackBar: MatSnackBar,
-    stateRef: ComponentStateRef<LoginComponent>
+    snackBar: MatSnackBar
   ) {
-    super(injector, cdRef, stateRef, snackBar);
+    super(injector, cdRef, snackBar);
 
     this.onSubmit$.pipe(
       mergeMap(() => {

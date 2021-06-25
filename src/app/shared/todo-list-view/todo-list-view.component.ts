@@ -1,5 +1,5 @@
 import { Component, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef, Injector, EventEmitter } from '@angular/core';
-import { ComponentStateRef, ComponentState } from '@lithiumjs/angular';
+import { ComponentStateRef, ComponentState, DeclareState } from '@lithiumjs/angular';
 import { Observable, Subject } from 'rxjs';
 import { TodoList } from '../../models/todo-list';
 import { filter, bufferTime, skip } from 'rxjs/operators';
@@ -20,7 +20,8 @@ export class TodoListViewComponent extends BaseComponent {
   public readonly onAddTask$ = new Subject<string>();
   
   @Input()
-  public list: TodoList = undefined;
+  @DeclareState()
+  public list!: TodoList;
 
   @Input()
   public name: string = '';

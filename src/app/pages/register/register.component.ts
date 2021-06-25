@@ -16,7 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class RegisterComponent extends EntryBasePage {
 
-  public name?: string = undefined;
+  public name = '';
 
   constructor(
     injector: Injector,
@@ -26,7 +26,7 @@ export class RegisterComponent extends EntryBasePage {
     userUtils: UserUtils, 
     snackBar: MatSnackBar
   ) {
-    super(injector, cdRef, stateRef, snackBar, stateRef.get('name'));
+    super(injector, cdRef, snackBar, stateRef.get('name'));
 
     this.onSubmit$.pipe(
       mergeMap(() => {
