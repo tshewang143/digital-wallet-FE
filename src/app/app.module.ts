@@ -32,53 +32,47 @@ import { AppBannerComponent } from './shared/app-banner/app-banner.component';
 import { MatRippleModule } from '@angular/material/core';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    RegisterComponent,
-    HomeComponent,
-    TodoListViewComponent,
-    DeleteDialogComponent,
-    HelpDialogComponent,
-    AppBannerComponent
-  ],
-  entryComponents: [
-    DeleteDialogComponent,
-    HelpDialogComponent
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    BrowserAnimationsModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatCardModule,
-    MatInputModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatListModule,
-    MatRadioModule,
-    MatIconModule,
-    MatExpansionModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatRippleModule,
-
-    NgxsModule.forRoot([
-      SessionState
-    ]),
-
-    RoutesModule
-  ],
-  providers: [
-    {
-      provide: MAT_DIALOG_DEFAULT_OPTIONS,
-      useValue: { hasBackdrop: false }
-    },
-    UserUtils,
-    SessionUtils,
-    AuthGuard
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        LoginComponent,
+        RegisterComponent,
+        HomeComponent,
+        TodoListViewComponent,
+        DeleteDialogComponent,
+        HelpDialogComponent,
+        AppBannerComponent
+    ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        BrowserAnimationsModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatCardModule,
+        MatInputModule,
+        MatToolbarModule,
+        MatSidenavModule,
+        MatListModule,
+        MatRadioModule,
+        MatIconModule,
+        MatExpansionModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatRippleModule,
+        NgxsModule.forRoot([
+            SessionState
+        ]),
+        RoutesModule
+    ],
+    providers: [
+        {
+            provide: MAT_DIALOG_DEFAULT_OPTIONS,
+            useValue: { hasBackdrop: false }
+        },
+        UserUtils,
+        SessionUtils,
+        AuthGuard
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
