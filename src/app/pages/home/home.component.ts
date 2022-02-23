@@ -3,13 +3,13 @@ import { HelpDialogComponent } from './help-dialog/help-dialog.component';
 import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
 import { UpdateUserAction } from './../../store/session/session.actions';
 import { Component, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
-import { AfterViewInit, ComponentStateRef, ComponentState, AsyncState } from '@lithiumjs/angular';
+import { AfterViewInit, ComponentStateRef, ComponentState, AsyncState, OnDestroy, ManagedSubject, ManagedBehaviorSubject } from '@lithiumjs/angular';
 import { Select } from '@ngxs/store';
 import { SessionState } from '../../store/session/session.store';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { User } from '../../models/user';
 import { Store } from '@ngxs/store';
-import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay, shareReplay, tap } from 'rxjs/operators';
+import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay, shareReplay, tap, takeUntil } from 'rxjs/operators';
 import { TodoList } from '../../models/todo-list';
 import { SessionUtils } from '../../utils/session-utils.service';
 import { Router } from '@angular/router';
@@ -26,26 +26,29 @@ import { BaseComponent } from 'src/app/core/base-component';
 export class HomeComponent extends BaseComponent {
 
   @AfterViewInit()
-  private readonly afterViewInit$: Observable<void>;
+  private readonly afterViewInit$!: Observable<void>;
+
+  @OnDestroy()
+  private readonly onDestroy$!: Observable<void>;
 
   @Select(SessionState.getUser)
-  public readonly user$: Observable<User>;
+  public readonly user$!: Observable<User>;
 
   @AsyncState()
   public user!: User;
 
   @Select(SessionState.getTodoLists)
-  public readonly todoLists$: Observable<User.TodoListDictionary>;
+  public readonly todoLists$!: Observable<User.TodoListDictionary>;
 
   @ViewChild('newListNameInput')
-  public readonly newListNameInput: ElementRef<HTMLElement>;
+  public newListNameInput!: ElementRef<HTMLElement>;
 
-  public readonly onAddList$ = new Subject<void>();
-  public readonly onNewListNameInputBlur$ = new Subject<void>();
-  public readonly onLogout$ = new Subject<void>();
-  public readonly onListChanged$ = new Subject<TodoList>();
-  public readonly onDeleteList$ = new Subject<string>();
-  public readonly onHelp$ = new Subject<void>();
+  public readonly onAddList$ = new ManagedSubject<void>(this);
+  public readonly onNewListNameInputBlur$ = new ManagedSubject<void>(this);
+  public readonly onLogout$ = new ManagedSubject<void>(this);
+  public readonly onListChanged$ = new ManagedSubject<TodoList>(this);
+  public readonly onDeleteList$ = new ManagedSubject<string>(this);
+  public readonly onHelp$ = new ManagedSubject<void>(this);
 
   public todoListNames: string[] = [];
   public newListName: string = '';
@@ -66,8 +69,8 @@ export class HomeComponent extends BaseComponent {
   ) {
     super(injector, cdRef);
 
-    const deleteDialogOpened$ = new BehaviorSubject<boolean>(false);
-    const helpDialogOpened$ = new BehaviorSubject<boolean>(false);
+    const deleteDialogOpened$ = new ManagedBehaviorSubject<boolean>(this, false);
+    const helpDialogOpened$ = new ManagedBehaviorSubject<boolean>(this, false);
 
     // Get the first todo list name in the list
     this.firstTodoListName$ = stateRef.get('todoListNames').pipe(
@@ -90,6 +93,7 @@ export class HomeComponent extends BaseComponent {
 
     // Wait for the list of todo lists to be updated...
     this.todoLists$.pipe(
+      takeUntil(this.onDestroy$),
       map(todoLists => _.keys(todoLists)),
       map(todoListNames => _.orderBy(todoListNames)) // Sort the list
     ).subscribe(todoListNames => this.todoListNames = todoListNames); // Update the todo list names
@@ -98,9 +102,7 @@ export class HomeComponent extends BaseComponent {
     this.onAddList$.subscribe(() => this.showNewListNameInput = true); // Show the list name input
 
     // Wait for a list to be changed...
-    this.onListChanged$.pipe(
-      mergeMap(() => this.user$.pipe(take(1)))
-    ).subscribe(user => store.dispatch(new UpdateUserAction(user))); // Update the store
+    this.onListChanged$.subscribe(() => store.dispatch(new UpdateUserAction(this.user))); // Update the store
 
     // Wait for the user to press the delete button...
     this.onDeleteList$.pipe(
@@ -116,13 +118,12 @@ export class HomeComponent extends BaseComponent {
           mapTo(listName)
         );
       }),
-      withLatestFrom(this.user$),
-      mergeMap(([listName, user]) => {
+      mergeMap((listName) => {
         // Delete the list
-        user.todoLists = _.omit(user.todoLists, [listName]);
+        this.user.todoLists = _.omit(this.user.todoLists, [listName]);
 
         // Update the store
-        return store.dispatch(new UpdateUserAction(user));
+        return store.dispatch(new UpdateUserAction(this.user));
       }),
       mergeMap(() => this.firstTodoListName$.pipe(take(1)))
     ).subscribe((listName) => {
@@ -131,24 +132,22 @@ export class HomeComponent extends BaseComponent {
     });
 
     // Wait for the new list field to be blurred...
-    this.onNewListNameInputBlur$.pipe(
-      withLatestFrom(this.user$)
-    ).subscribe(([, user]) => {
+    this.onNewListNameInputBlur$.subscribe(() => {
       // Make sure list name is unique
-      while (_.keys(user.todoLists).includes(this.newListName)) {
+      while (_.keys(this.user.todoLists).includes(this.newListName)) {
         this.newListName += ' - 1';
       }
 
       // Add the list to the user
       if (this.newListName.length > 0) {
-        user.todoLists = Object.assign({
+        this.user.todoLists = Object.assign({
           [this.newListName]: {
             todo: [],
             completed: []
           }
-        }, user.todoLists);
+        }, this.user.todoLists);
 
-        store.dispatch(new UpdateUserAction(user));
+        store.dispatch(new UpdateUserAction(this.user));
 
         // Focus the new list
         this.activeListName = this.newListName;

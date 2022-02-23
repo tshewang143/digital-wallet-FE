@@ -1,5 +1,5 @@
-import { ComponentStateRef, DeclareState } from '@lithiumjs/angular';
-import { Observable, combineLatest, Subject } from 'rxjs';
+import { ComponentStateRef, DeclareState, ManagedSubject } from '@lithiumjs/angular';
+import { Observable, combineLatest } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { filter, map } from 'rxjs/operators';
 import { BaseComponent } from 'src/app/core/base-component';
@@ -8,7 +8,8 @@ import { ChangeDetectorRef, Directive, Injector } from '@angular/core';
 @Directive()
 export abstract class EntryBasePage extends BaseComponent {
 
-    public readonly onSubmit$ = new Subject<void>();
+    public readonly onSubmit$ = new ManagedSubject<void>(this);
+
     public formSubmissionEnabled = true;
     public username = '';
     public password = '';
@@ -34,7 +35,7 @@ export abstract class EntryBasePage extends BaseComponent {
 
         // Only enable the submit button if the user entered all fields
         combineLatest([stateRef.get("username"), stateRef.get("password"), ...fields]).pipe(
-            map(_fields => _fields.every(Boolean))
+            map(resolvedFields => resolvedFields.every(Boolean))
         ).subscribe(formSubmissionEnabled => this.formSubmissionEnabled = formSubmissionEnabled);
     }
 }
