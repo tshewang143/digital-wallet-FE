@@ -36,75 +36,87 @@ One goal of this project is to implement simple and concise reactive programming
 
 The project contains several components that showcase common use cases that you may encounter when writing an Angular application and how Lithium for Angular can be used effectively in these scenarios. Several examples are:
 
-### Using Lithium for reactive two-way form binding
+### Basic usage of `ComponentState` and `ComponentStateRef`
 
-The [```LoginComponent```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/login/login.component.ts) and [```RegisterComponent```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/register/register.component.ts) components illustrate how Lithium's ```@StateEmitter()``` decorator can be used for seamless, fully reactive two-way data binding:
-
-```ts
-@EventSource()
-protected onSubmit$: Observable<void>;
-
-@StateEmitter()
-protected username$: Subject<string>;
-
-@StateEmitter()
-protected password$: Subject<string>;
-
-[...]
-
-this.onSubmit$.pipe(
-    mergeMap(() => combineLatest(this.username$, this.password$).pipe(take(1))),
-    mergeMap(([username, password]) => userUtils.login(username, password).pipe([...]))
-).subscribe(() => router.navigate(['/home']));
-```
-
-```html
-<form #loginForm="ngForm" (ngSubmit)="onSubmit()">
-    <mat-form-field>
-        <input [...] name="username" [(ngModel)]="username">
-    </mat-form-field>
-    <mat-form-field>
-          <input [...] name="password" [(ngModel)]="password">
-    </mat-form-field>
-    [...]
-</form>
-```
-
-### Using Lithium with ```@Input()``` and ```Output()```
-
-The [```TodoListViewComponent```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/shared/todo-list-view/todo-list-view.component.ts) shows how Lithium can be used with Angular's built-in ```Input``` and ```Output``` decorators. The component also shows an example of how a single property decorated with ```@StateEmitter()``` can be used simutaneously as both an ```@Input()``` and ```@Output()``` (note that order is important):
+There are many usages of `ComponentState` and `ComponentStateRef` in the application. One example is the [`HomeComponent`](/src/app/pages/home/home.component.ts):
 
 ```ts
-@Output('listChanged')
-@StateEmitter()
-@Input('list')
-private readonly list$: Subject<TodoList>;
+...
+
+public showNewListNameInput = false;
+
+...
+
+constructor(
+    stateRef: ComponentStateRef<HomeComponent>
+) {
+    // Wait for showNewListNameInput to become true...
+    stateRef.get('showNewListNameInput').pipe(
+        filter(Boolean),
+        delay(100)
+    ).subscribe(() => this.newListNameInput.nativeElement.focus()); // Focus the input box
+
+    ...
+}
 ```
 
-### Using Lithium with NGXS/Store
+### Using `ComponentStateRef` in base component classes
 
-Lithium is compatible with other reactive decorator-based libraries like NGXS/Store. The [```HomeComponent```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/home/home.component.ts#L46) illustrates an example of using ```@StateEmitter()``` with ```@Select()``` from NGXS:
+The [```EntryBasePage```](/src/app/pages/base/entry/entry-base-page.ts) class is a base component class that makes use of `ComponentStateRef`:
 
 ```ts
-@StateEmitter()
-@Select(SessionState.getUser)
-private readonly user$: Observable<User>;
+...
+
+constructor() {
+    const stateRef = injector.get<ComponentStateRef<EntryBasePage>>(ComponentStateRef);
+
+    stateRef.get("error").pipe(
+        filter<string>(Boolean)
+    ).subscribe(error => {
+        console.error(error);
+        snackBar.open(error, 'Dismiss', { verticalPosition: 'top' });
+    });
+
+    ...
+}
 ```
 
-Note: Since ```Select``` returns an ```Observable```, ```user$``` will also be an ```Observable``` instead of a ```Subject```.
+### Using `@AsyncState` to alias external observables
 
-### Using Lithium's ```@StateEmitter()``` and ```@EventSource()``` decorators with class inheritance
-
-The [```EntryBasePage```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/base/entry/entry-base-page.ts) component is a base class that illustrates how both ```StateEmitter``` and ```EventSource``` can be declared in a parent class and can be used in the parent class as well as any child classes. This is useful for defining logic that is common to multiple components. This class is used by [```LoginComponent```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/login/login.component.ts) and [```RegisterComponent```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/register/register.component.ts).
-
-### Using advanced StateEmitter proxying with ```@StateEmitter.FromSelf()```
-
-In [```HelpDialogComponent```](https://github.com/lVlyke/lithium-angular-example-app/blob/master/src/app/pages/home/help-dialog/help-dialog.component.ts), a [self-proxied ```StateEmitter```](https://github.com/lVlyke/lithium-angular#proxied-stateemitters) with the proxy mode ```From``` is used to create a ```BehaviorSubject``` from an NGXS ```Select``` expression that returns an ```Observable```.
+The [`HomeComponent`](/src/app/pages/home/home.component.ts) makes use of the `@AsyncState` decorator to create a synchronous alias of a `@Select` observable from NGXS:
 
 ```ts
-@StateEmitter.FromSelf()
-@Select(SessionState.hideBanner)
-public readonly hideBanner$: Subject<boolean>;
+class HomeComponent {
+    ...
+
+    @Select(SessionState.getUser)
+    public readonly user$!: Observable<User>;
+
+    // `user` automatically receives all emissions from `user$`
+    @AsyncState()
+    public user!: User;
+
+    ...
+
+    constructor() {
+        ...
+
+        this.onListChanged$.subscribe(() => store.dispatch(new UpdateUserAction(this.user)));
+    }
+}
 ```
 
-Normally ```@Select()``` creates a property of type ```Observable```, but using Lithium's proxying feature we can create a ```BehaviorSubject``` that takes the first value from the result of the ```Select``` expression. (We could also change the ```StateEmitter``` proxy mode to ```Merge``` to continue to receive emissions from the original ```Select``` expression!)
+### Using `@DeclareState` to enable observation of undeclared properties
+
+The [`TodoListViewComponent`](/src/app/shared/todo-list-view/todo-list-view.component.ts) uses the `@DeclareState` decorator to declare an undeclared property to Lithium:
+
+```ts
+class TodoListViewComponent extends BaseComponent {
+
+    @Input()
+    @DeclareState()
+    public list!: TodoList;
+
+    ...
+}
+```

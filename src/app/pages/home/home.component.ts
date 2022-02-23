@@ -1,18 +1,18 @@
+import * as _ from 'lodash';
 import { HelpDialogComponent } from './help-dialog/help-dialog.component';
 import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
 import { UpdateUserAction } from './../../store/session/session.actions';
 import { Component, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
-import { StateEmitter, EventSource, AfterViewInit } from '@lithiumjs/angular';
+import { AfterViewInit, ComponentStateRef, ComponentState, AsyncState, OnDestroy, ManagedSubject, ManagedBehaviorSubject } from '@lithiumjs/angular';
 import { Select } from '@ngxs/store';
 import { SessionState } from '../../store/session/session.store';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { User } from '../../models/user';
 import { Store } from '@ngxs/store';
-import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay, shareReplay, tap } from 'rxjs/operators';
+import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay, shareReplay, tap, takeUntil } from 'rxjs/operators';
 import { TodoList } from '../../models/todo-list';
 import { SessionUtils } from '../../utils/session-utils.service';
 import { Router } from '@angular/router';
-import * as _ from 'lodash';
 import { MatDialog } from '@angular/material/dialog';
 import { BaseComponent } from 'src/app/core/base-component';
 
@@ -20,62 +20,48 @@ import { BaseComponent } from 'src/app/core/base-component';
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  providers: [ComponentState.create(HomeComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent extends BaseComponent {
 
   @AfterViewInit()
-  private readonly afterViewInit$: Observable<void>;
+  private readonly afterViewInit$!: Observable<void>;
 
-  @EventSource()
-  private readonly onAddList$: Observable<void>;
+  @OnDestroy()
+  private readonly onDestroy$!: Observable<void>;
 
-  @EventSource()
-  private readonly onNewListNameInputBlur$: Observable<void>;
-
-  @EventSource()
-  private readonly onLogout$: Observable<void>;
-
-  @EventSource()
-  private readonly onListChanged$: Observable<TodoList>;
-
-  @EventSource()
-  private readonly onDeleteList$: Observable<string>;
-
-  @EventSource()
-  private readonly onHelp$: Observable<void>;
-
-  @StateEmitter()
   @Select(SessionState.getUser)
-  public readonly user$: Observable<User>;
+  public readonly user$!: Observable<User>;
+
+  @AsyncState()
+  public user!: User;
 
   @Select(SessionState.getTodoLists)
-  public readonly todoLists$: Observable<User.TodoListDictionary>;
+  public readonly todoLists$!: Observable<User.TodoListDictionary>;
 
-  @StateEmitter({ initial: () => [] })
-  private readonly todoListNames$: Subject<string[]>;
-
-  @StateEmitter()
-  private readonly activeListName$: Subject<string>;
-
-  @StateEmitter({ initialValue: '' })
-  private readonly newListName$: Subject<string>;
-
-  @StateEmitter()
-  private readonly showNewListNameInput$: Subject<boolean>;
-
-  @StateEmitter()
-  private readonly showMenu$: Subject<boolean>;
-
-  @StateEmitter()
   @ViewChild('newListNameInput')
-  private readonly newListNameInput$: Subject<ElementRef<HTMLElement>>;
+  public newListNameInput!: ElementRef<HTMLElement>;
+
+  public readonly onAddList$ = new ManagedSubject<void>(this);
+  public readonly onNewListNameInputBlur$ = new ManagedSubject<void>(this);
+  public readonly onLogout$ = new ManagedSubject<void>(this);
+  public readonly onListChanged$ = new ManagedSubject<TodoList>(this);
+  public readonly onDeleteList$ = new ManagedSubject<string>(this);
+  public readonly onHelp$ = new ManagedSubject<void>(this);
+
+  public todoListNames: string[] = [];
+  public newListName: string = '';
+  public showMenu = false;
+  public showNewListNameInput = false;
+  public activeListName?: string = undefined;
 
   private readonly firstTodoListName$: Observable<string>;
 
   constructor(
     injector: Injector,
-    cdRef: ChangeDetectorRef, 
+    cdRef: ChangeDetectorRef,
+    stateRef: ComponentStateRef<HomeComponent>,
     store: Store,
     sessionUtils: SessionUtils,
     router: Router,
@@ -83,37 +69,40 @@ export class HomeComponent extends BaseComponent {
   ) {
     super(injector, cdRef);
 
-    const deleteDialogOpened$ = new BehaviorSubject<boolean>(false);
-    const helpDialogOpened$ = new BehaviorSubject<boolean>(false);
+    const deleteDialogOpened$ = new ManagedBehaviorSubject<boolean>(this, false);
+    const helpDialogOpened$ = new ManagedBehaviorSubject<boolean>(this, false);
 
     // Get the first todo list name in the list
-    this.firstTodoListName$ = this.todoListNames$.pipe(
+    this.firstTodoListName$ = stateRef.get('todoListNames').pipe(
       map(todoListNames => todoListNames.length > 0 ? _.first(todoListNames) : undefined),
       shareReplay(1)
     );
 
-    // Wait for the list of todo lists to be updated...
-    this.todoLists$.pipe(
-      map(todoLists => _.keys(todoLists)),
-      map(todoListNames => _.orderBy(todoListNames)) // Sort the list
-    ).subscribe(this.todoListNames$); // Update the todo list names
-
     // Highlight the first todo list initially
-    this.user$.pipe(
+    stateRef.get('user').pipe(
       mergeMapTo(this.firstTodoListName$),
       filter<string>(Boolean),
       take(1),
-    ).subscribe(listName => this.activeListName$.next(listName));
+    ).subscribe(listName => this.activeListName = listName);
+
+    // Wait for showNewListNameInput to become true...
+    stateRef.get('showNewListNameInput').pipe(
+      filter(Boolean),
+      delay(100)
+    ).subscribe(() => this.newListNameInput.nativeElement.focus()); // Focus the input box
+
+    // Wait for the list of todo lists to be updated...
+    this.todoLists$.pipe(
+      takeUntil(this.onDestroy$),
+      map(todoLists => _.keys(todoLists)),
+      map(todoListNames => _.orderBy(todoListNames)) // Sort the list
+    ).subscribe(todoListNames => this.todoListNames = todoListNames); // Update the todo list names
 
     // Wait for the user to press the add list button...
-    this.onAddList$.pipe(
-      mapTo(true)
-    ).subscribe(this.showNewListNameInput$); // Show the list name input
+    this.onAddList$.subscribe(() => this.showNewListNameInput = true); // Show the list name input
 
     // Wait for a list to be changed...
-    this.onListChanged$.pipe(
-      mergeMap(() => this.user$.pipe(take(1)))
-    ).subscribe(user => store.dispatch(new UpdateUserAction(user))); // Update the store
+    this.onListChanged$.subscribe(() => store.dispatch(new UpdateUserAction(this.user))); // Update the store
 
     // Wait for the user to press the delete button...
     this.onDeleteList$.pipe(
@@ -129,48 +118,44 @@ export class HomeComponent extends BaseComponent {
           mapTo(listName)
         );
       }),
-      withLatestFrom(this.user$),
-      mergeMap(([listName, user]) => {
+      mergeMap((listName) => {
         // Delete the list
-        user.todoLists = _.omit(user.todoLists, [listName]);
+        this.user.todoLists = _.omit(this.user.todoLists, [listName]);
 
         // Update the store
-        return store.dispatch(new UpdateUserAction(user));
+        return store.dispatch(new UpdateUserAction(this.user));
       }),
       mergeMap(() => this.firstTodoListName$.pipe(take(1)))
     ).subscribe((listName) => {
       // Focus the first list
-      this.activeListName$.next(listName);
+      this.activeListName = listName;
     });
 
     // Wait for the new list field to be blurred...
-    this.onNewListNameInputBlur$.pipe(
-      mergeMap(() => this.newListName$.pipe(take(1))),
-      withLatestFrom(this.user$)
-    ).subscribe(([newListName, user]: [string, User]) => {
+    this.onNewListNameInputBlur$.subscribe(() => {
       // Make sure list name is unique
-      while (_.keys(user.todoLists).includes(newListName)) {
-        newListName += ' - 1';
+      while (_.keys(this.user.todoLists).includes(this.newListName)) {
+        this.newListName += ' - 1';
       }
 
       // Add the list to the user
-      if (newListName.length > 0) {
-        user.todoLists = Object.assign({
-          [newListName]: {
+      if (this.newListName.length > 0) {
+        this.user.todoLists = Object.assign({
+          [this.newListName]: {
             todo: [],
             completed: []
           }
-        }, user.todoLists);
+        }, this.user.todoLists);
 
-        store.dispatch(new UpdateUserAction(user));
+        store.dispatch(new UpdateUserAction(this.user));
 
         // Focus the new list
-        this.activeListName$.next(newListName);
+        this.activeListName = this.newListName;
       }
 
       // Clear the input box and hide it
-      this.newListName$.next('');
-      this.showNewListNameInput$.next(false);
+      this.newListName = '';
+      this.showNewListNameInput = false;
     });
 
     // Wait for the user to click the help button...
@@ -190,18 +175,11 @@ export class HomeComponent extends BaseComponent {
       router.navigate(['']);
     });
 
-    // Wait for showNewListNameInput to become true...
-    this.showNewListNameInput$.pipe(
-      filter(Boolean),
-      delay(100),
-      withLatestFrom(this.newListNameInput$)
-    ).subscribe(([, newListNameInput]) => newListNameInput.nativeElement.focus()); // Focus the input box
-
     // Show the side menu after the page loads
     this.afterViewInit$.pipe(
       delay(850)
     ).subscribe(() => {
-      this.showMenu$.next(true);
+      this.showMenu = true;
     });
   }
 }

@@ -10,12 +10,12 @@
   <a mat-icon-button href="https://github.com/lVlyke/lithium-angular-example-app" target="_blank">
     <mat-icon class="github-icon"></mat-icon>
   </a>
-  <button mat-icon-button (click)="onHelp()">
+  <button mat-icon-button (click)="onHelp$.next()">
     <mat-icon>help</mat-icon>
   </button>
   <button mat-raised-button
           color="primary"
-          (click)="onLogout()">Logout</button>
+          (click)="onLogout$.next()">Logout</button>
 </mat-toolbar>
 
 <mat-sidenav-container #container>
@@ -39,7 +39,7 @@
               <span class="list-name">{{listName}}</span>
               <button mat-icon-button 
                       *ngIf="activeListName === listName"
-                      (click)="onDeleteList(listName)">
+                      (click)="onDeleteList$.next(listName)">
                   <mat-icon>delete</mat-icon>
               </button>
           </mat-radio-button>
@@ -51,7 +51,7 @@
                   matInput
                   [(ngModel)]="newListName"
                   (keydown.enter)="newListNameInput.blur()"
-                  (blur)="onNewListNameInputBlur()">
+                  (blur)="onNewListNameInputBlur$.next()">
           </mat-form-field>
         </mat-list-item>
 
@@ -59,7 +59,7 @@
           <button mat-stroked-button 
                   id="add-list-button"
                   [color]="todoListNames.length === 0 ? 'accent' : 'primary'"
-                  (click)="onAddList()">
+                  (click)="onAddList$.next()">
               <mat-icon>add</mat-icon>
           </button>
         </mat-list-item>
@@ -73,7 +73,7 @@
       <app-todo-list-view *ngIf="activeListName === listName" 
                           [list]="user.todoLists[listName]"
                           [name]="listName"
-                          (listChanged)="onListChanged($event)">
+                          (listChanged)="onListChanged$.next($event)">
       </app-todo-list-view>
     </ng-container>
 

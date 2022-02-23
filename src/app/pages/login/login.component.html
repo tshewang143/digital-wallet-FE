@@ -9,7 +9,7 @@
     </mat-card-header>
 
     <mat-card-content>
-      <form id="login-form" #loginForm="ngForm" (ngSubmit)="onSubmit()">
+      <form id="login-form" #loginForm="ngForm" (ngSubmit)="onSubmit$.next()">
         <mat-form-field>
           <input matInput
                  required

@@ -1,14 +1,12 @@
-import { LiComponent, AutoPush } from '@lithiumjs/angular';
+import { AutoPush } from '@lithiumjs/angular';
 import { Injector, ChangeDetectorRef } from '@angular/core';
 
-export class BaseComponent extends LiComponent {
+export class BaseComponent {
 
     constructor(
         protected readonly injector: Injector,
         cdRef?: ChangeDetectorRef
     ) {
-        super();
-
         if (cdRef) {
             AutoPush.enable(this, cdRef);
         }
