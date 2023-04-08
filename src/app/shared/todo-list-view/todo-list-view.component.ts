@@ -52,7 +52,9 @@ export class TodoListViewComponent extends BaseComponent {
       });
 
       // Filter out the deleted items
-      this.list.todo = this.list.todo.filter(Boolean);
+      this.list = Object.assign(this.list, {
+        todo: this.list.todo.filter(Boolean)
+      });
     });
 
     // Wait for a task to be added...
@@ -60,7 +62,9 @@ export class TodoListViewComponent extends BaseComponent {
       filter(item => item.length > 0)
     ).subscribe((item) => {
       // Add the item to the list
-      this.list.todo.push(item);
+      this.list = Object.assign(this.list, {
+        todo: this.list.todo.concat([item])
+      });
     });
   }
 }

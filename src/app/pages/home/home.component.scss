@@ -9,7 +9,7 @@ mat-toolbar {
 
     .toggle-menu-button {
         margin-right: 8px;
-        
+
         &.mat-button-toggle-checked {
             color: #fff;
             background-color: lighten($theme-color, 10%);
@@ -37,16 +37,12 @@ mat-toolbar {
         padding-top: 0;
     }
 
-    .mat-subheader {
+    .subheader {
         font-weight: bold;
     }
 
-    #user-info::ng-deep .mat-list-item-content {
-        padding-left: 0;
-    }
-
     #user-image {
-        display: flex;
+        display: inline-flex;
         justify-content: center;
         align-items: center;
         border-radius: 100px;
@@ -56,7 +52,7 @@ mat-toolbar {
         font-size: 1.5rem;
         text-transform: uppercase;
         font-weight: normal;
-        margin: 0 0.3rem;
+        margin-right: 0.5rem;
     }
 
     #lists-header {
@@ -77,10 +73,6 @@ mat-toolbar {
         flex-direction: row;
         justify-content: center;
         padding-top: 0.5rem;
-
-        ::ng-deep .mat-list-item-content {
-            width: 70%;
-        }
     }
 
     #add-list-button {
@@ -91,36 +83,36 @@ mat-toolbar {
 }
 
 #sidenav-radio-group mat-radio-button {
+    display: block;
     width: 100%;
     padding: 0;
 
-    &::ng-deep .mat-radio-container {
-        display: none;
+    &::ng-deep .mdc-form-field {
+        display: block;
+        width: 100%;
+        min-height: 3rem;
     }
 
     &::ng-deep label {
+        display: flex;
         width: 100%;
-
-        & .mat-radio-label-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.7rem;
-            width: 90%;
-
-            > .list-name {
-                max-width: 90%;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
-            }
-        }
+        height: 3rem;
+        align-items: center;
+        justify-content: space-between;
     }
 
-    &.mat-radio-checked {
+    &::ng-deep .mdc-radio {
+        position: absolute;
+        display: none;
+    }
+
+    &.checked {
         background: $theme-color;
-        color: white;
-        font-weight: bold;
+
+        &::ng-deep label {
+            color: white; 
+            font-weight: bold;
+        }
     }
 }
 

@@ -3,20 +3,6 @@
 
 // @angular/material style overrides
 
-mat-form-field.mat-inline-label {
-
-    &.mat-focused label.mat-form-field-label {
-        visibility: hidden;
-    }
-}
-
-mat-dialog-content {
-    font-family: Roboto,"Helvetica Neue",sans-serif;
-}
-
-mat-dialog-container {
-    max-width: 60vw;
-}
 
 // Custom styles
 
@@ -24,6 +10,7 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100vh;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 app-root > *:last-child {

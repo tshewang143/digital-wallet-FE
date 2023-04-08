@@ -7,7 +7,7 @@
     <mat-list-item *ngFor="let todoItem of list.todo; let i = index">
       <mat-checkbox #checkbox
                     color="primary"
-                    (click)="checkbox.checked ? $event.preventDefault() : onCompleteItem$.next([i, checkbox])">
+                    (change)="onCompleteItem$.next([i, checkbox])">
         {{todoItem}}
       </mat-checkbox>
     </mat-list-item>

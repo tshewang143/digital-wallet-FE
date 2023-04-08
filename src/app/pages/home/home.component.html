@@ -29,15 +29,16 @@
           <span>{{user.name}}</span>
         </mat-list-item>
 
-        <h1 mat-subheader id="lists-header">
+        <h1 mat-subheader class="subheader" id="lists-header">
           <mat-icon>insert_drive_file</mat-icon>
           <span>Your todo lists</span>
         </h1>
 
         <ng-container *ngFor="let listName of todoListNames">
-          <mat-radio-button [value]="listName">
+          <mat-radio-button #radioButton [value]="listName" [class.checked]="radioButton.checked">
               <span class="list-name">{{listName}}</span>
               <button mat-icon-button 
+                      class="list-delete-button"
                       *ngIf="activeListName === listName"
                       (click)="onDeleteList$.next(listName)">
                   <mat-icon>delete</mat-icon>
