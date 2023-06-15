@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { Session } from '../models/session';
@@ -7,7 +7,7 @@ import * as moment from 'moment';
 import { map } from 'rxjs/operators';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuard  {
 
   @Select()
   public session$: Observable<Session>;
