@@ -1,24 +1,26 @@
+import _ from 'lodash';
+import moment from 'moment';
 import { Injectable } from '@angular/core';
 import { Session } from '../models/session';
-import { Store, Select } from '@ngxs/store';
+import { Store } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
 import { SetAction, InvalidateAction } from '../store/session/session.actions';
-import * as moment from 'moment';
 import { User } from '../models/user';
-import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
+import { SessionState } from '../store/session/session.store';
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class SessionUtils {
 
-  @Select()
-  public session$: Observable<Session>;
+  public session$!: Observable<Session>;
 
   constructor(private store: Store) {
+    this.session$ = store.select(SessionState.get);
+
     // Wait for the session to change...
     this.session$.pipe(
       filter<Session>(Boolean)
-    ).subscribe(session => {
+    ).subscribe((session) => {
       // Update the local store
       this.sessionStore = session;
 

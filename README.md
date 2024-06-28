@@ -2,7 +2,9 @@
 
 ## **[Live Demo](https://lvlyke.github.io/lithium-angular-example-app)**
 
-This project was created to demonstrate how Lithium for Angular ([@lithiumjs/angular](https://github.com/lVlyke/lithium-angular)) can be used to write completely reactive Angular components with very little boilerplate. The project makes use of other libraries like [ngxs/store](https://github.com/ngxs/store) to show how Lithium can easily integrate with other libraries.
+A simple TODO list app built with Angular and [@lithiumjs/angular](https://github.com/lVlyke/lithium-angular).
+
+This project was created to demonstrate how Lithium for Angular enables creating performant Angular components with very little boilerplate by fully leveraging Observables and Zone-less change detection. The project also makes use of other libraries like [ngxs/store](https://github.com/ngxs/store) to show how Lithium integrates with other libraries.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
 
@@ -32,7 +34,22 @@ To use the app, you must first register a user. Once you have created a user, yo
 
 ## The code - Points of interest
 
-One goal of this project is to implement simple and concise reactive programming patterns to write Angular UI components. All component logic in the application uses reactive programming with almost no boilerplate code, enabled by the use of Lithium as well as libraries like NGXS/Store for reactive state management.
+The application is fully Zone-less via the use of `provideExperimentalZonelessChangeDetection()`. All change detection is handled automatically by Lithium via `AutoPush`. This is enabled in `BaseComponent`, the common base class for all components in the app:
+
+```ts
+export class BaseComponent {
+
+    constructor(
+        protected readonly injector: Injector,
+        cdRef?: ChangeDetectorRef
+    ) {
+        if (cdRef) {
+            // Enables automatic push-based change detection for this class:
+            AutoPush.enable(this, cdRef);
+        }
+    }
+}
+```
 
 The project contains several components that showcase common use cases that you may encounter when writing an Angular application and how Lithium for Angular can be used effectively in these scenarios. Several examples are:
 
@@ -83,14 +100,13 @@ constructor() {
 
 ### Using `@AsyncState` to alias external observables
 
-The [`HomeComponent`](/src/app/pages/home/home.component.ts) makes use of the `@AsyncState` decorator to create a synchronous alias of a `@Select` observable from NGXS:
+The [`HomeComponent`](/src/app/pages/home/home.component.ts) makes use of the `@AsyncState` decorator to create a synchronous alias of an external state Observable from NGXS:
 
 ```ts
 class HomeComponent {
     ...
 
-    @Select(SessionState.getUser)
-    public readonly user$!: Observable<User>;
+    public readonly user$!: Observable<User> = this.store.select(SessionState.getUser);
 
     // `user` automatically receives all emissions from `user$`
     @AsyncState()

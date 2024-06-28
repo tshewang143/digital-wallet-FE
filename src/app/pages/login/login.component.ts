@@ -1,17 +1,39 @@
 import { Component, ChangeDetectorRef, ChangeDetectionStrategy, Injector } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { EMPTY } from 'rxjs';
 import { mergeMap, catchError } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { ComponentState } from '@lithiumjs/angular';
 import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { ComponentState } from '@lithiumjs/angular';
 
 @Component({
+  standalone: true,
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  providers: [ComponentState.create(LoginComponent)],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatSnackBarModule
+  ],
+  providers: [
+    ComponentState.create(LoginComponent)
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent extends EntryBasePage {

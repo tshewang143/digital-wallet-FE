@@ -12,17 +12,22 @@ import { Injectable } from '@angular/core';
 export class SessionState {
 
     @Selector()
-    public static getUser(session: Session): User {
+    public static get(session?: Session): Session | undefined {
+        return session;
+    }
+
+    @Selector()
+    public static getUser(session?: Session): User {
         return session ? session.user : undefined;
     }
 
     @Selector()
-    public static getTodoLists(session: Session): User.TodoListDictionary {
+    public static getTodoLists(session?: Session): User.TodoListDictionary {
         return session ? session.user.todoLists : undefined;
     }
 
     @Selector()
-    public static hideBanner(session: Session): boolean {
+    public static hideBanner(session?: Session): boolean {
         return session ? session.user.hideBanner : false;
     }
 

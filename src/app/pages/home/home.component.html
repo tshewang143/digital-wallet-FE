@@ -19,7 +19,7 @@
 </mat-toolbar>
 
 <mat-sidenav-container #container>
-  <mat-sidenav id="sidenav" mode="side" [opened]="showMenu">
+  <mat-sidenav *ngIf="!!user" id="sidenav" mode="side" [opened]="showMenu">
     <mat-radio-group id="sidenav-radio-group" [(ngModel)]="activeListName">
 
       <mat-list>

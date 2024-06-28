@@ -1,21 +1,18 @@
+import moment from 'moment';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Select } from '@ngxs/store';
+import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { Session } from '../models/session';
-import * as moment from 'moment';
 import { map } from 'rxjs/operators';
+import { SessionState } from '../store/session/session.store';
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class AuthGuard  {
 
-  @Select()
-  public session$: Observable<Session>;
-
-  constructor(private router: Router) {}
+  constructor(private readonly router: Router, private readonly store: Store) {}
 
   public canActivate(): Observable<boolean> {
-    return this.session$.pipe(
+    return this.store.select(SessionState.get).pipe(
       map(session => session && moment().isBefore(session.expiresDate)),
       map(canActivate => {
         if (!canActivate) {

@@ -1,17 +1,33 @@
+import _ from 'lodash';
 import { Component, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef, Injector, EventEmitter } from '@angular/core';
-import { ComponentStateRef, ComponentState, DeclareState, ManagedSubject } from '@lithiumjs/angular';
-import { Observable, Subject } from 'rxjs';
-import { TodoList } from '../../models/todo-list';
+import { CommonModule } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
 import { filter, bufferTime, skip } from 'rxjs/operators';
-import * as _ from 'lodash';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { BaseComponent } from 'src/app/core/base-component';
+import { ComponentStateRef, ComponentState, DeclareState, ManagedSubject } from '@lithiumjs/angular';
+import { TodoList } from '../../models/todo-list';
+import { BaseComponent } from '../../core/base-component';
 
 @Component({
+  standalone: true,
   selector: 'app-todo-list-view',
   templateUrl: './todo-list-view.component.html',
   styleUrls: ['./todo-list-view.component.scss'],
-  providers: [ComponentState.create(TodoListViewComponent)],
+  imports: [
+    CommonModule,
+
+    MatListModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatExpansionModule,
+    MatInputModule
+  ],
+  providers: [
+    ComponentState.create(TodoListViewComponent)
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TodoListViewComponent extends BaseComponent {

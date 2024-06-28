@@ -1,17 +1,39 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { ComponentState, ComponentStateRef } from '@lithiumjs/angular';
 import { EMPTY } from 'rxjs';
 import { map, mergeMap, catchError } from 'rxjs/operators';
-import { Router } from '@angular/router';
 import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
+  standalone: true,
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  providers: [ComponentState.create(RegisterComponent)],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatSnackBarModule
+  ],
+  providers: [
+    ComponentState.create(RegisterComponent)
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent extends EntryBasePage {

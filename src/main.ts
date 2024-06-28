@@ -1,12 +1,27 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-import { AppModule } from './app/app.module';
+import { enableProdMode, provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
+import { provideStore } from '@ngxs/store';
+import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { environment } from './environments/environment';
+import { APP_ROUTES } from './app/routes';
+import { AppComponent } from './app/app.component';
+import { SessionState } from './app/store/session/session.store';
 
 if (environment.production) {
-  enableProdMode();
+    enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.log(err));
+bootstrapApplication(AppComponent, {
+    providers: [
+        provideExperimentalZonelessChangeDetection(),
+        provideAnimations(),
+        provideStore([SessionState]),
+        provideRouter(APP_ROUTES),
+        {
+            provide: MAT_DIALOG_DEFAULT_OPTIONS,
+            useValue: { hasBackdrop: false }
+        }
+    ]
+}).catch(err => console.log(err));

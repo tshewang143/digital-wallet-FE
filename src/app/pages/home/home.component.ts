@@ -1,44 +1,74 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
+import { Component, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatRadioModule } from '@angular/material/radio';
+import { Observable } from 'rxjs';
+import { take, mergeMap, filter, withLatestFrom, map, delay, shareReplay, tap, takeUntil } from 'rxjs/operators';
+import {
+  AfterViewInit,
+  ComponentStateRef,
+  ComponentState,
+  AsyncState,
+  OnDestroy,
+  ManagedSubject,
+  ManagedBehaviorSubject
+} from '@lithiumjs/angular';
+import { Store } from '@ngxs/store';
 import { HelpDialogComponent } from './help-dialog/help-dialog.component';
 import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
 import { UpdateUserAction } from './../../store/session/session.actions';
-import { Component, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
-import { AfterViewInit, ComponentStateRef, ComponentState, AsyncState, OnDestroy, ManagedSubject, ManagedBehaviorSubject } from '@lithiumjs/angular';
-import { Select } from '@ngxs/store';
 import { SessionState } from '../../store/session/session.store';
-import { Observable } from 'rxjs';
 import { User } from '../../models/user';
-import { Store } from '@ngxs/store';
-import { take, mergeMap, mergeMapTo, filter, withLatestFrom, mapTo, map, delay, shareReplay, tap, takeUntil } from 'rxjs/operators';
 import { TodoList } from '../../models/todo-list';
 import { SessionUtils } from '../../utils/session-utils.service';
-import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { BaseComponent } from 'src/app/core/base-component';
+import { BaseComponent } from '../../core/base-component';
+import { TodoListViewComponent } from '../../shared/todo-list-view/todo-list-view.component';
 
 @Component({
+  standalone: true,
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  providers: [ComponentState.create(HomeComponent)],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatDialogModule,
+    MatIconModule,
+    MatListModule,
+    MatSidenavModule,
+    MatRadioModule,
+
+    TodoListViewComponent
+  ],
+  providers: [
+    ComponentState.create(HomeComponent)
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent extends BaseComponent {
 
-  @AfterViewInit()
-  private readonly afterViewInit$!: Observable<void>;
-
-  @OnDestroy()
-  private readonly onDestroy$!: Observable<void>;
-
-  @Select(SessionState.getUser)
   public readonly user$!: Observable<User>;
 
   @AsyncState()
-  public user!: User;
-
-  @Select(SessionState.getTodoLists)
-  public readonly todoLists$!: Observable<User.TodoListDictionary>;
+  public readonly user!: User;
 
   @ViewChild('newListNameInput')
   public newListNameInput!: ElementRef<HTMLElement>;
@@ -56,7 +86,14 @@ export class HomeComponent extends BaseComponent {
   public showNewListNameInput = false;
   public activeListName?: string = undefined;
 
-  private readonly firstTodoListName$: Observable<string>;
+  @AfterViewInit()
+  private readonly afterViewInit$!: Observable<void>;
+
+  @OnDestroy()
+  private readonly onDestroy$!: Observable<void>;
+
+  private readonly todoLists$!: Observable<User.TodoListDictionary>;
+  private readonly firstTodoListName$!: Observable<string>;
 
   constructor(
     injector: Injector,
@@ -72,6 +109,9 @@ export class HomeComponent extends BaseComponent {
     const deleteDialogOpened$ = new ManagedBehaviorSubject<boolean>(this, false);
     const helpDialogOpened$ = new ManagedBehaviorSubject<boolean>(this, false);
 
+    this.user$ = store.select(SessionState.getUser);
+    this.todoLists$ = store.select(SessionState.getTodoLists);
+
     // Get the first todo list name in the list
     this.firstTodoListName$ = stateRef.get('todoListNames').pipe(
       map(todoListNames => todoListNames.length > 0 ? _.first(todoListNames) : undefined),
@@ -80,7 +120,7 @@ export class HomeComponent extends BaseComponent {
 
     // Highlight the first todo list initially
     stateRef.get('user').pipe(
-      mergeMapTo(this.firstTodoListName$),
+      mergeMap(() => this.firstTodoListName$),
       filter<string>(Boolean),
       take(1),
     ).subscribe(listName => this.activeListName = listName);
@@ -115,7 +155,7 @@ export class HomeComponent extends BaseComponent {
         return dialog.open(DeleteDialogComponent).afterClosed().pipe(
           tap(() => deleteDialogOpened$.next(false)),
           filter(Boolean),
-          mapTo(listName)
+          map(() => listName)
         );
       }),
       mergeMap((listName) => {

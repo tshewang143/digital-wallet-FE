@@ -1,12 +1,12 @@
+import _ from 'lodash';
+import moment from 'moment';
 import { Observable, of, throwError } from 'rxjs';
 import { User } from '../models/user';
-import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
-import * as moment from 'moment';
 import { SessionUtils } from './session-utils.service';
 import { Session } from '../models/session';
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class UserUtils {
 
   constructor(private sessionUtils: SessionUtils) { }
