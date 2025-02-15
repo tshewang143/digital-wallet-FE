@@ -15,26 +15,24 @@ import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
 
 @Component({
-  standalone: true,
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatSnackBarModule
-  ],
-  providers: [
-    ComponentState.create(LoginComponent)
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    imports: [
+        CommonModule,
+        FormsModule,
+        RouterModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatSnackBarModule
+    ],
+    providers: [
+        ComponentState.create(LoginComponent)
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent extends EntryBasePage {
 

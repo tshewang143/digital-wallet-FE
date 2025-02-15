@@ -36,32 +36,29 @@ import { BaseComponent } from '../../core/base-component';
 import { TodoListViewComponent } from '../../shared/todo-list-view/todo-list-view.component';
 
 @Component({
-  standalone: true,
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatDialogModule,
-    MatIconModule,
-    MatListModule,
-    MatSidenavModule,
-    MatRadioModule,
-
-    TodoListViewComponent
-  ],
-  providers: [
-    ComponentState.create(HomeComponent)
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    imports: [
+        CommonModule,
+        FormsModule,
+        RouterModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatDialogModule,
+        MatIconModule,
+        MatListModule,
+        MatSidenavModule,
+        MatRadioModule,
+        TodoListViewComponent
+    ],
+    providers: [
+        ComponentState.create(HomeComponent)
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent extends BaseComponent {
 

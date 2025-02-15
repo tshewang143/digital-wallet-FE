@@ -9,17 +9,15 @@ import { BaseComponent } from './core/base-component';
 import { AppBannerComponent } from './shared/app-banner/app-banner.component';
 
 @Component({
-  standalone: true,
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  imports: [
-    CommonModule,
-    RouterModule,
-
-    AppBannerComponent
-],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    imports: [
+        CommonModule,
+        RouterModule,
+        AppBannerComponent
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent extends BaseComponent {
 

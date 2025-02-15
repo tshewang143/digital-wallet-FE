@@ -12,23 +12,21 @@ import { TodoList } from '../../models/todo-list';
 import { BaseComponent } from '../../core/base-component';
 
 @Component({
-  standalone: true,
-  selector: 'app-todo-list-view',
-  templateUrl: './todo-list-view.component.html',
-  styleUrls: ['./todo-list-view.component.scss'],
-  imports: [
-    CommonModule,
-
-    MatListModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatExpansionModule,
-    MatInputModule
-  ],
-  providers: [
-    ComponentState.create(TodoListViewComponent)
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-todo-list-view',
+    templateUrl: './todo-list-view.component.html',
+    styleUrls: ['./todo-list-view.component.scss'],
+    imports: [
+        CommonModule,
+        MatListModule,
+        MatCheckboxModule,
+        MatFormFieldModule,
+        MatExpansionModule,
+        MatInputModule
+    ],
+    providers: [
+        ComponentState.create(TodoListViewComponent)
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TodoListViewComponent extends BaseComponent {
 

@@ -13,23 +13,21 @@ import { HideBannerAction } from '../../../store/session/session.actions';
 import { BaseComponent } from '../../../core/base-component';
 
 @Component({
-  standalone: true,
-  selector: 'app-help-dialog',
-  templateUrl: './help-dialog.component.html',
-  styleUrls: ['./help-dialog.component.scss'],
-  imports: [
-    CommonModule,
-    FormsModule,
-
-    MatDialogModule,
-    MatListModule,
-    MatCheckboxModule,
-    MatButtonModule
-  ],
-  providers: [
-    ComponentState.create(HelpDialogComponent)
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-help-dialog',
+    templateUrl: './help-dialog.component.html',
+    styleUrls: ['./help-dialog.component.scss'],
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatDialogModule,
+        MatListModule,
+        MatCheckboxModule,
+        MatButtonModule
+    ],
+    providers: [
+        ComponentState.create(HelpDialogComponent)
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HelpDialogComponent extends BaseComponent {
 

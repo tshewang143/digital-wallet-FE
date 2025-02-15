@@ -15,26 +15,24 @@ import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
 
 @Component({
-  standalone: true,
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss'],
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatSnackBarModule
-  ],
-  providers: [
-    ComponentState.create(RegisterComponent)
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-register',
+    templateUrl: './register.component.html',
+    styleUrls: ['./register.component.scss'],
+    imports: [
+        CommonModule,
+        FormsModule,
+        RouterModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatSnackBarModule
+    ],
+    providers: [
+        ComponentState.create(RegisterComponent)
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent extends EntryBasePage {
 
