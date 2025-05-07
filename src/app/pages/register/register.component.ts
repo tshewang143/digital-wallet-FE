@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -20,6 +21,7 @@ import { EntryBasePage } from '../base/entry/entry-base-page';
     styleUrls: ['./register.component.scss'],
     imports: [
         CommonModule,
+        MatSelectModule,
         FormsModule,
         RouterModule,
         MatCardModule,

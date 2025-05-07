@@ -24,6 +24,14 @@
                  name="username"
                  [(ngModel)]="username">
         </mat-form-field>
+        <mat-form-field appearance="fill" style="width: 100%;">
+          <mat-label>Role</mat-label>
+          <mat-select [(ngModel)]="selectedRole" name="role" required>
+            <mat-option value="school">School</mat-option>
+            <mat-option value="student">Student</mat-option>
+            <mat-option value="employer">Employer</mat-option>
+          </mat-select>
+        </mat-form-field>
         <mat-form-field>
           <input matInput
                  required

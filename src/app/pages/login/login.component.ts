@@ -1,6 +1,7 @@
 import { Component, ChangeDetectorRef, ChangeDetectionStrategy, Injector } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterModule } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
@@ -21,6 +22,7 @@ import { EntryBasePage } from '../base/entry/entry-base-page';
     imports: [
         CommonModule,
         FormsModule,
+        MatSelectModule,
         RouterModule,
         MatCardModule,
         MatFormFieldModule,
