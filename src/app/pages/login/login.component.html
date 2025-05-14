@@ -9,7 +9,7 @@
     </mat-card-header>
 
     <mat-card-content>
-      <form id="login-form" #loginForm="ngForm" (ngSubmit)="onSubmit$.next()">
+      <form id="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="fill" style="width: 100%;">
           <mat-label>Role</mat-label>
           <mat-select [(ngModel)]="selectedRole" name="role" required>

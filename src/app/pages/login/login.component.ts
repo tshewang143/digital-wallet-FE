@@ -1,6 +1,4 @@
-import { Component, ChangeDetectorRef, ChangeDetectionStrategy, Injector } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+// Changed from FormsModule to ReactiveFormsModule
 import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterModule } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -14,14 +12,19 @@ import { mergeMap, catchError } from 'rxjs/operators';
 import { ComponentState } from '@lithiumjs/angular';
 import { UserUtils } from '../../utils/user-utils.service';
 import { EntryBasePage } from '../base/entry/entry-base-page';
+import { AuthService } from './auth.service';
+import { Component, ChangeDetectorRef, ChangeDetectionStrategy, Injector } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms'; // Added FormGroup import
 
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss'],
+    standalone: true, // Added standalone flag
     imports: [
         CommonModule,
-        FormsModule,
+        ReactiveFormsModule, // Replaced FormsModule with ReactiveFormsModule
         MatSelectModule,
         RouterModule,
         MatCardModule,
@@ -37,28 +40,39 @@ import { EntryBasePage } from '../base/entry/entry-base-page';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent extends EntryBasePage {
+  // Declare form control if not present in base class
+  loginForm: FormGroup;
 
   constructor(
+    private authService: AuthService,
+    private fb: FormBuilder,
     injector: Injector,
     cdRef: ChangeDetectorRef,
-    router: Router,
-    userUtils: UserUtils,
-    snackBar: MatSnackBar
+    // 2. Add proper access modifiers and types
+    protected router: Router,
+    private userUtils: UserUtils,
+    private snackBar: MatSnackBar
   ) {
-    super(injector, cdRef, snackBar);
+    // 3. Match base class constructor parameters
+   super(injector, cdRef, snackBar);
 
-    this.onSubmit$.pipe(
-      mergeMap(() => {
-        return userUtils.login(this.username, this.password).pipe(
-          catchError((error) => {
-            this.error = error;
-            return EMPTY;
-          })
-        );
-      }),
-    ).subscribe(() => {
-      // Go to the home page
-      router.navigate(['/home']);
+    // Form initialization
+    this.loginForm = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
     });
+  }
+
+  onSubmit() {
+    if (this.loginForm.valid) {
+      const { username, password } = this.loginForm.value;
+      this.authService.login(username!, password!).subscribe({
+        next: () => this.router.navigate(['/dashboard']),
+        error: (err) => {
+          console.error('Login error:', err);
+          this.snackBar.open('Login failed', 'Close', { duration: 3000 });
+        }
+      });
+    }
   }
 }
